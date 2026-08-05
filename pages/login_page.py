@@ -11,6 +11,7 @@ class LoginPage:
         self.username = page.get_by_role("textbox", name="Username")
         self.password = page.get_by_role("textbox", name="Password")
         self.login_button = page.get_by_role("button", name="Login")
+        self.error_message = page.get_by_role("alert")
 
     def open(self):
         self.page.goto(
