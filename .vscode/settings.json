@@ -1,0 +1,11 @@
+{
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/__init__.py": true,
+    "**/.pytest_cache": true
+  },
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "testing.codeLenses": true,
+  "python-envs.defaultEnvManager": "ms-python.python:system"
+}
