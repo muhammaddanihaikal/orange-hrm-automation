@@ -1,9 +1,6 @@
 import pytest
 from playwright.sync_api import sync_playwright, expect
 
-# Set default assertion timeout to 15 seconds globally for slow demo server responses
-expect.set_options(timeout=15000)
-
 
 @pytest.fixture(scope="session")
 def playwright():
@@ -14,7 +11,7 @@ def playwright():
 @pytest.fixture(scope="session")
 def browser(playwright):
     browser = playwright.chromium.launch(
-        headless=False
+        headless=True
     )
 
     yield browser
