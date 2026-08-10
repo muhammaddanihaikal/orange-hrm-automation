@@ -1,12 +1,11 @@
 from playwright.sync_api import expect
-from pages.base_page import BASE_URL
+from config import BASE_URL
 from pages.login_page import LoginPage
 from pages.dashboard_page import DashboardPage
 from utils.read_data import read_data
 
 # Load data pengujian dari JSON
 login_data = read_data("login_data.json")
-
 
 def test_login_valid(page):
     """Melakukan login menggunakan data yang valid"""

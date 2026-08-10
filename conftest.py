@@ -1,5 +1,6 @@
 import pytest
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import sync_playwright
+from config import HEADLESS
 
 
 @pytest.fixture(scope="session")
@@ -11,7 +12,7 @@ def playwright():
 @pytest.fixture(scope="session")
 def browser(playwright):
     browser = playwright.chromium.launch(
-        headless=True
+        headless=HEADLESS
     )
 
     yield browser
