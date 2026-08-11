@@ -1,6 +1,7 @@
 from playwright.sync_api import expect
 from pages.login_page import LoginPage
-from pages.admin_page import AdminPage
+from pages.admin.admin_page import AdminPage
+from pages.admin.add_user_page import AddUserPage
 from pages.sidebar import Sidebar
 
 def test_add_user(page):
@@ -8,6 +9,7 @@ def test_add_user(page):
 
     login_page = LoginPage(page)
     admin_page = AdminPage(page)
+    add_user_page = AddUserPage(page)
     sidebar = Sidebar(page)
 
     login_page.open()
@@ -15,4 +17,4 @@ def test_add_user(page):
 
     sidebar.admin.click()
     admin_page.add_btn.click()
-    admin_page.add_user()
+    add_user_page.add_user()
