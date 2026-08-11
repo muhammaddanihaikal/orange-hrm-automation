@@ -17,6 +17,13 @@ class AddUserPage():
             .filter(has_text="Employee Name")
             .get_by_role("textbox")
         )
+        self.employee_options = (
+            self.field_container
+            .filter(has_text="Employee Name")
+            .get_by_role("listbox")
+            .locator("div")
+        )
+
         self.status = (
             self.field_container
             .filter(has_text="Status")
@@ -41,27 +48,33 @@ class AddUserPage():
         )
         self.save_btn = page.get_by_role("button", name="Save")
         
-    def add_user(self):
+    def add_user(self, data):
         # isi user role
         self.user_role.click()
-        self.page.get_by_role("option", name="Admin").click()
+        self.page.get_by_role(
+            "option",
+            name=data["user_role"]
+        ).click()
 
         # isi employee name
-        self.employee_name.fill("a")
-        self.page.get_by_role("option").first.click()
+        self.employee_name.fill(data["employee_keyword"])
+        self.employee_options.first.wait_for(state="visible")
+        self.page.get_by_text("Searching....", exact=True).wait_for(state="hidden")
+        self.employee_options.first.click()
 
         # isi status
         self.status.click()
-        self.page.get_by_role("option", name="Enabled").click()
+        self.page.get_by_role(
+            "option",
+            name=data["status"]
+        ).click()
 
         # isi username
-        self.username.fill("dani")
+        self.username.fill(data["username"])
 
-        # isi password
-        self.password.fill("dani123")
-
-        # isi confirm password
-        self.confirm_password.fill("dani123")
+        # isi password & conf password
+        self.password.fill(data["password"])
+        self.confirm_password.fill(data["password"])
 
         # klik button save
         self.save_btn.click()
