@@ -22,7 +22,6 @@ class EditUserPage():
             .get_by_role("listbox")
             .locator("div")
         )
-
         self.status = (
             self.field_container
             .filter(has_text="Status")
@@ -60,7 +59,9 @@ class EditUserPage():
         self.employee_name.fill(data["employee_keyword"])
         self.employee_options.first.wait_for(state="visible")
         self.page.get_by_text("Searching....", exact=True).wait_for(state="hidden")
+        selected_employee_name = self.employee_options.first.inner_text()
         self.employee_options.first.click()
+        
 
         # isi status
         self.status.click()
@@ -75,3 +76,5 @@ class EditUserPage():
 
         # klik button save
         self.save_btn.click()
+
+        return selected_employee_name

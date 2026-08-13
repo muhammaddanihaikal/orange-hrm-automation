@@ -1,12 +1,14 @@
 from playwright.sync_api import expect
-from pages.login_page import LoginPage
-from pages.admin.admin_page import AdminPage
+
+from config import BASE_URL
 from pages.admin.add_user_page import AddUserPage
+from pages.admin.admin_page import AdminPage
+from pages.admin.edit_user_page import EditUserPage
+from pages.login_page import LoginPage
 from pages.sidebar import Sidebar
 from utils.data_factory import generate_username
 from utils.read_data import read_data
-from config import BASE_URL
-from pages.admin.edit_user_page import EditUserPage
+
 
 user_data = read_data("user_data.json")
 
@@ -20,46 +22,87 @@ edit_user_data = user_data["edit_user"]
 
 
 def test_add_user(page):
-    "Menambah data user"
+    "menambah data user"
 
     login_page = LoginPage(page)
     admin_page = AdminPage(page)
     add_user_page = AddUserPage(page)
     sidebar = Sidebar(page)
 
+    # login
     login_page.open()
     login_page.login("Admin", "admin123")
 
+    # buka admin page
     sidebar.admin.click()
+
+    # buka form add user
     admin_page.add_btn.click()
 
+    # tambah user
     add_user_page.add_user(add_user_data)
-    expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
 
+    # pastikan kembali ke admin page
+    expect(page).to_have_url(
+        f"{BASE_URL}/web/index.php/admin/viewSystemUsers"
+    )
+
+    # cari user yang baru dibuat
     admin_page.search(username)
-    expect(admin_page.user_row(username)).to_be_visible()
+
+    # pastikan user berhasil ditambahkan
+    expect(
+        admin_page.user_row(username)
+    ).to_be_visible()
 
 
 def test_edit_user(page):
     "Mengubah data user"
+
     login_page = LoginPage(page)
     admin_page = AdminPage(page)
     edit_user_page = EditUserPage(page)
     sidebar = Sidebar(page)
 
+    # login
     login_page.open()
     login_page.login("Admin", "admin123")
 
+    # buka admin page
     sidebar.admin.click()
+
+    # cari user
     admin_page.search(username)
     expect(admin_page.user_row(username)).to_be_visible()
 
+    # buka halaman edit
     admin_page.edit_button(username).click()
 
-    edit_user_page.edit_user(edit_user_data)
-    expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
-    
+    # edit user dan simpan employee yang dipilih
+    selected_employee = edit_user_page.edit_user(edit_user_data)
+
+    # pastikan kembali ke admin page
+    expect(page).to_have_url(
+        f"{BASE_URL}/web/index.php/admin/viewSystemUsers"
+    )
+
+    # cari user yang sudah diedit
     admin_page.search(username)
+
+    # pastikan user masih ada
     expect(admin_page.user_row(username)).to_be_visible()
+
+    # validasi hasil edit
+    expect(
+        admin_page.user_role_cell(username)
+    ).to_have_text(edit_user_data["user_role"])
+
+    expect(
+        admin_page.employee_name_cell(username)
+    ).to_have_text(selected_employee)
+
+    expect(
+        admin_page.status_cell(username)
+    ).to_have_text(edit_user_data["status"])
 
 

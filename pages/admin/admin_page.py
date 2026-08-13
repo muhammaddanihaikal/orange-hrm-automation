@@ -30,6 +30,18 @@ class AdminPage:
     def user_row(self, username):
         return self.user_table.get_by_role("row").filter(has_text=username)
 
+    # cell user role
+    def user_role_cell(self, username):
+        return self.user_row(username).get_by_role("cell").nth(2)
+
+    # cell employee name
+    def employee_name_cell(self, username):
+        return self.user_row(username).get_by_role("cell").nth(3)
+
+    # cell status
+    def status_cell(self, username):
+        return self.user_row(username).get_by_role("cell").nth(4)
+
     # ambil button edit
     def edit_button(self, username):
         return (
