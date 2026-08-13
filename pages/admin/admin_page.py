@@ -26,8 +26,22 @@ class AdminPage:
         self.username.fill(username)
         self.search_btn.click()
 
-    # cari data di tabel
+    # cari data di table->row
     def user_row(self, username):
         return self.user_table.get_by_role("row").filter(has_text=username)
 
-        
+    # ambil button edit
+    def edit_button(self, username):
+        return (
+            self.user_row(username)
+            .get_by_role("button")
+            .filter(has=self.page.locator("i.bi-pencil-fill"))
+        )
+
+    # ambil button delete
+    def delete_button(self, username):
+        return (
+            self.user_row(username)
+            .get_by_role("button")
+            .filter(has=self.page.locator("i.bi-trash"))
+        )

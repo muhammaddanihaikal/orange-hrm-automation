@@ -1,7 +1,15 @@
 {
-  "user_role": "Admin",
-  "employee_keyword": "a",
-  "status": "Enabled",
-  "username_prefix": "dani",
-  "password": "dani123"
+  "add_user": {
+    "user_role": "Admin",
+    "employee_keyword": "a",
+    "status": "Enabled",
+    "username_prefix": "dani",
+    "password": "dani123"
+  },
+  "edit_user": {
+    "user_role": "Admin",
+    "employee_keyword": "b",
+    "status": "Enabled",
+    "password": "dani1234"
+  }
 }
