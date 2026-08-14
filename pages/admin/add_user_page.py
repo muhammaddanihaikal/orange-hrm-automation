@@ -58,8 +58,8 @@ class AddUserPage():
 
         # isi employee name
         self.employee_name.fill(data["employee_keyword"])
-        self.employee_options.first.wait_for(state="visible")
         self.page.get_by_text("Searching....", exact=True).wait_for(state="hidden")
+        self.employee_options.first.wait_for(state="visible")
         self.employee_options.first.click()
 
         # isi status

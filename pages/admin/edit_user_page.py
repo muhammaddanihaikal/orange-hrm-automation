@@ -57,8 +57,8 @@ class EditUserPage():
 
         # isi employee name
         self.employee_name.fill(data["employee_keyword"])
-        self.employee_options.first.wait_for(state="visible")
         self.page.get_by_text("Searching....", exact=True).wait_for(state="hidden")
+        self.employee_options.first.wait_for(state="visible")
         selected_employee_name = self.employee_options.first.inner_text()
         self.employee_options.first.click()
         
@@ -70,9 +70,17 @@ class EditUserPage():
             name=data["status"]
         ).click()
 
-        # # isi password & conf password
-        # self.password.fill(data["password"])
-        # self.confirm_password.fill(data["password"])
+        # centang checkbox yes
+        self.change_password = ( 
+            self.field_container 
+            .filter(has_text="Change Password ?") 
+            .locator(".oxd-checkbox-input") 
+        ) 
+        self.change_password.click()
+
+        # isi password & conf password
+        self.password.fill(data["password"])
+        self.confirm_password.fill(data["password"])
 
         # klik button save
         self.save_btn.click()
