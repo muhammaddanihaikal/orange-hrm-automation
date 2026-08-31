@@ -76,10 +76,14 @@ def test_edit_user(page):
     expect(admin_page.user_row(username)).to_be_visible()
 
     # buka halaman edit
-    admin_page.edit_button(username).click()
+    admin_page.click_edit(username)
 
     # edit user dan simpan employee yang dipilih
     selected_employee = edit_user_page.edit_user(edit_user_data)
+    name_parts = selected_employee.split()
+    expected_employee = (
+        f"{name_parts[0]} {name_parts[-1]}"
+    )
 
     # pastikan kembali ke admin page
     expect(page).to_have_url(
@@ -90,19 +94,12 @@ def test_edit_user(page):
     admin_page.search(username)
 
     # pastikan user masih ada
-    expect(admin_page.user_row(username)).to_be_visible()
+    row = admin_page.user_row(username)
+    expect(row).to_be_visible()
 
     # validasi hasil edit
-    expect(
-        admin_page.user_role_cell(username)
-    ).to_have_text(edit_user_data["user_role"])
-
-    expect(
-        admin_page.employee_name_cell(username)
-    ).to_have_text(selected_employee)
-
-    expect(
-        admin_page.status_cell(username)
-    ).to_have_text(edit_user_data["status"])
+    expect(row.get_by_role("cell").nth(2)).to_have_text(edit_user_data["user_role"])
+    expect(row.get_by_role("cell").nth(3)).to_have_text(expected_employee)
+    expect(row.get_by_role("cell").nth(4)).to_have_text(edit_user_data["status"])
 
 

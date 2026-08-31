@@ -15,6 +15,7 @@ class LoginPage:
 
         self.heading = page.get_by_role("heading", name="Login")
         self.error_message = page.get_by_role("alert")
+        self.required_message = page.locator("span").filter(has_text="Required").first
 
     def open(self):
         self.page.goto(f"{BASE_URL}{self.PATH}")

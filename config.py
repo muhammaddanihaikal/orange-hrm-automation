@@ -1,2 +1,2 @@
 BASE_URL = "https://opensource-demo.orangehrmlive.com"
-HEADLESS = False
+HEADLESS = True
