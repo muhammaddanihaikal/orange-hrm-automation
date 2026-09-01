@@ -199,6 +199,7 @@ dan memakai `login_page.heading` sebagai locator (bukan inline `get_by_role`).
 |---|---|---|
 | `test_add_user` | Tambah user baru + verifikasi muncul di tabel | ✅ |
 | `test_edit_user` | Edit user (role, employee, status, password) + verifikasi | ✅ |
+| `test_delete_user` | Hapus user + verifikasi row hilang & No Records Found | ✅ |
 
 ---
 
@@ -208,19 +209,26 @@ dan memakai `login_page.heading` sebagai locator (bukan inline `get_by_role`).
 test_add_user:
   login → klik sidebar "Admin" → klik "Add" →
   isi form (user_role, employee_name, status, username, password) →
-  save → verifikasi redirect → search user → verifikasi row ada di tabel
+  save → tunggu alert sukses → verifikasi redirect → search user → verifikasi row ada di tabel
 
 test_edit_user:
   login → klik sidebar "Admin" → search user →
   klik edit button → ubah (user_role, employee, status, change_password) →
-  save → verifikasi redirect → search user → verifikasi cell (role, employee, status)
+  save → tunggu alert sukses → verifikasi redirect → search user → verifikasi cell (role, employee, status)
+
+test_delete_user:
+  login → klik sidebar "Admin" → search user →
+  delete user via Action Method (klik trash + konfirmasi popup) →
+  search user lagi → verifikasi row hidden & No Records Found muncul
 ```
 
 ---
 
 ## 🎯 Goals Belajar Selanjutnya (To-Do List)
 
-- [ ] **Data-Driven Testing (DDT) dengan `@pytest.mark.parametrize`**: Mengubah test berulang (misalnya test validasi login dengan berbagai error) menjadi 1 fungsi saja.
+- [x] **Data-Driven Testing (DDT) dengan `@pytest.mark.parametrize`**: Mengubah test login berulang menjadi 1 fungsi saja dengan pemisahan validasi.
+- [x] **Full CRUD Flow (Create, Read, Update, Delete)**: Menyelesaikan pengujian lengkap untuk manajemen user di `test_user.py`.
+- [x] **Action-Based POM Pattern**: Merapikan Page Object dengan Action Method yang konsisten dan anti micro-functions.
 - [ ] **Reuse Authentication State**: Menyimpan status login (cookies) ke sebuah file dan memuatnya ke fixture `logged_in_page`, supaya test CRUD tidak perlu mengulang proses login UI dari awal.
 - [ ] **Network Interception & API Response**: Menggunakan `page.wait_for_response()` untuk memastikan API di background sudah membalas request, sehingga test lebih stabil (mengurangi *flakiness*).
 - [ ] **Negative Test Case & Edge Cases**: Menguji validasi form (misal: membiarkan form tambah user kosong) lalu membuat assertion pada *error message* yang muncul.

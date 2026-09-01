@@ -1,4 +1,4 @@
-from playwright.sync_api import expect
+from playwright.sync_api import expect, Page
 
 from config import BASE_URL
 from pages.admin.add_user_page import AddUserPage
@@ -21,8 +21,8 @@ username = add_user_data["username"]
 edit_user_data = user_data["edit_user"]
 
 
-def test_add_user(page):
-    "menambah data user"
+def test_add_user(page: Page):
+    """Menambah data user"""
 
     login_page = LoginPage(page)
     admin_page = AdminPage(page)
@@ -42,6 +42,9 @@ def test_add_user(page):
     # tambah user
     add_user_page.add_user(add_user_data)
 
+    # validasi nunggu sampe alert sukses saves muncul
+    expect(page.get_by_text("Successfully Saved")).to_be_visible()
+
     # pastikan kembali ke admin page
     expect(page).to_have_url(
         f"{BASE_URL}/web/index.php/admin/viewSystemUsers"
@@ -56,8 +59,8 @@ def test_add_user(page):
     ).to_be_visible()
 
 
-def test_edit_user(page):
-    "Mengubah data user"
+def test_edit_user(page: Page):
+    """Mengubah data user"""
 
     login_page = LoginPage(page)
     admin_page = AdminPage(page)
@@ -85,6 +88,9 @@ def test_edit_user(page):
         f"{name_parts[0]} {name_parts[-1]}"
     )
 
+    # validasi nunggu sampe alert sukses saves muncul
+    expect(page.get_by_text("Successfully Saved")).to_be_visible()
+
     # pastikan kembali ke admin page
     expect(page).to_have_url(
         f"{BASE_URL}/web/index.php/admin/viewSystemUsers"
@@ -102,4 +108,27 @@ def test_edit_user(page):
     expect(row.get_by_role("cell").nth(3)).to_have_text(expected_employee)
     expect(row.get_by_role("cell").nth(4)).to_have_text(edit_user_data["status"])
 
+def test_delete_user(page: Page):
+    """Menghapus data user"""
+    login_page = LoginPage(page)
+    admin_page = AdminPage(page)
+    sidebar = Sidebar(page)
 
+    # login
+    login_page.open()
+    login_page.login("admin", "admin123")
+
+    # buka sidebar admin
+    sidebar.admin.click()
+
+    # cari user dan validasi
+    admin_page.search(username)
+    expect(admin_page.user_row(username)).to_be_visible()
+
+    # hapus user
+    admin_page.delete_user(username)
+
+    # cari user dan validasi
+    admin_page.search(username)
+    expect(admin_page.user_row(username)).to_be_hidden()
+    expect(page.get_by_text("No Records Found").first).to_be_visible()
