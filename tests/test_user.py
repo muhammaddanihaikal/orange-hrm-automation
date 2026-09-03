@@ -21,17 +21,13 @@ username = add_user_data["username"]
 edit_user_data = user_data["edit_user"]
 
 
-def test_add_user(page: Page):
+def test_add_user(logged_in_page: Page):
     """Menambah data user"""
+    page = logged_in_page
 
-    login_page = LoginPage(page)
     admin_page = AdminPage(page)
     add_user_page = AddUserPage(page)
     sidebar = Sidebar(page)
-
-    # login
-    login_page.open()
-    login_page.login("Admin", "admin123")
 
     # buka admin page
     sidebar.admin.click()
@@ -59,17 +55,13 @@ def test_add_user(page: Page):
     ).to_be_visible()
 
 
-def test_edit_user(page: Page):
+def test_edit_user(logged_in_page: Page):
     """Mengubah data user"""
+    page = logged_in_page
 
-    login_page = LoginPage(page)
     admin_page = AdminPage(page)
     edit_user_page = EditUserPage(page)
     sidebar = Sidebar(page)
-
-    # login
-    login_page.open()
-    login_page.login("Admin", "admin123")
 
     # buka admin page
     sidebar.admin.click()
@@ -88,8 +80,8 @@ def test_edit_user(page: Page):
         f"{name_parts[0]} {name_parts[-1]}"
     )
 
-    # validasi nunggu sampe alert sukses saves muncul
-    expect(page.get_by_text("Successfully Saved")).to_be_visible()
+    # validasi nunggu sampe alert sukses update muncul
+    expect(page.get_by_text("Successfully Updated")).to_be_visible()
 
     # pastikan kembali ke admin page
     expect(page).to_have_url(
@@ -108,15 +100,12 @@ def test_edit_user(page: Page):
     expect(row.get_by_role("cell").nth(3)).to_have_text(expected_employee)
     expect(row.get_by_role("cell").nth(4)).to_have_text(edit_user_data["status"])
 
-def test_delete_user(page: Page):
+def test_delete_user(logged_in_page: Page):
     """Menghapus data user"""
-    login_page = LoginPage(page)
+    page = logged_in_page
+    
     admin_page = AdminPage(page)
     sidebar = Sidebar(page)
-
-    # login
-    login_page.open()
-    login_page.login("admin", "admin123")
 
     # buka sidebar admin
     sidebar.admin.click()

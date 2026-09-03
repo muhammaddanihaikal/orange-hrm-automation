@@ -1,15 +1,15 @@
 {
   "add_user": {
     "user_role": "Admin",
-    "employee_keyword": "manda",
+    "employee_keyword": "dani",
     "status": "Enabled",
     "username_prefix": "dani",
-    "password": "dani123"
+    "password": "Dani1234!"
   },
   "edit_user": {
     "user_role": "Admin",
-    "employee_keyword": "manda",
+    "employee_keyword": "Budi",
     "status": "Enabled",
-    "password": "dani1234"
+    "password": "Dani1234!"
   }
 }
