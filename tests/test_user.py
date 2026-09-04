@@ -55,7 +55,7 @@ def test_add_user(logged_in_page: Page):
     ).to_be_visible()
 
 
-def test_edit_user(logged_in_page: Page):
+def test_edit_user(logged_in_page: Page, api_create_user: str):
     """Mengubah data user"""
     page = logged_in_page
 
@@ -67,11 +67,11 @@ def test_edit_user(logged_in_page: Page):
     sidebar.admin.click()
 
     # cari user
-    admin_page.search(username)
-    expect(admin_page.user_row(username)).to_be_visible()
+    admin_page.search(api_create_user)
+    expect(admin_page.user_row(api_create_user)).to_be_visible()
 
     # buka halaman edit
-    admin_page.click_edit(username)
+    admin_page.click_edit(api_create_user)
 
     # edit user dan simpan employee yang dipilih
     selected_employee = edit_user_page.edit_user(edit_user_data)
@@ -89,10 +89,10 @@ def test_edit_user(logged_in_page: Page):
     )
 
     # cari user yang sudah diedit
-    admin_page.search(username)
+    admin_page.search(api_create_user)
 
     # pastikan user masih ada
-    row = admin_page.user_row(username)
+    row = admin_page.user_row(api_create_user)
     expect(row).to_be_visible()
 
     # validasi hasil edit
@@ -100,7 +100,7 @@ def test_edit_user(logged_in_page: Page):
     expect(row.get_by_role("cell").nth(3)).to_have_text(expected_employee)
     expect(row.get_by_role("cell").nth(4)).to_have_text(edit_user_data["status"])
 
-def test_delete_user(logged_in_page: Page):
+def test_delete_user(logged_in_page: Page, api_create_user: str):
     """Menghapus data user"""
     page = logged_in_page
     
@@ -111,13 +111,13 @@ def test_delete_user(logged_in_page: Page):
     sidebar.admin.click()
 
     # cari user dan validasi
-    admin_page.search(username)
-    expect(admin_page.user_row(username)).to_be_visible()
+    admin_page.search(api_create_user)
+    expect(admin_page.user_row(api_create_user)).to_be_visible()
 
     # hapus user
-    admin_page.delete_user(username)
+    admin_page.delete_user(api_create_user)
 
     # cari user dan validasi
-    admin_page.search(username)
-    expect(admin_page.user_row(username)).to_be_hidden()
+    admin_page.search(api_create_user)
+    expect(admin_page.user_row(api_create_user)).to_be_hidden()
     expect(page.get_by_text("No Records Found").first).to_be_visible()

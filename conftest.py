@@ -1,5 +1,5 @@
 import pytest
-from playwright.sync_api import sync_playwright, Browser
+from playwright.sync_api import sync_playwright, Browser, Page
 from config import HEADLESS, BASE_URL
 from pages.login_page import LoginPage
 import os
@@ -84,3 +84,39 @@ def logged_in_page(browser: Browser, global_login):
     yield page
 
     context.close()
+
+@pytest.fixture
+def api_create_user(logged_in_page: Page):
+    """Menyiapkan user data (Setup) via API dan menghapusnya setelah test (Teardown)."""
+    tumbal_username = "tumbal_username_123"
+
+    # 1. buat user
+    post_response = logged_in_page.request.post(
+        f"{BASE_URL}/web/index.php/api/v2/admin/users",
+        data={
+            "userRoleId": 1, 
+            "empNumber": 2,
+            "username": tumbal_username, 
+            "password": "JagungManis_9192", 
+            "status": True 
+        }
+    )
+    assert post_response.ok, f"Gagal bikin user via API: {post_response.text()}"
+
+    response_json = post_response.json()
+    user_id = response_json["data"]["id"]
+
+    # 2. pinjemin username
+    yield tumbal_username
+
+    # 3. teardown (hapus user)
+    delete_response = logged_in_page.request.delete(
+        f"{BASE_URL}/web/index.php/api/v2/admin/users",
+        data={
+            "ids": [user_id]
+        }
+    )
+
+    # abaikan kalo statusnya 404, karena tujuanya udah tercapai yaitu "User Terhapus"
+    if(delete_response.status != 404):
+        assert delete_response.ok, f"Gagal hapus user via API: {delete_response.text()}"
