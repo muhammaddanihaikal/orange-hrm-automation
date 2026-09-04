@@ -1,12 +1,14 @@
-from playwright.sync_api import expect
-from config import BASE_URL
-from pages.login_page import LoginPage
-from pages.dashboard.dashboard_page import DashboardPage
-from utils.read_data import read_data
 import pytest
+from playwright.sync_api import expect
+
+from config import BASE_URL
+from pages.dashboard.dashboard_page import DashboardPage
+from pages.login_page import LoginPage
+from utils.read_data import read_data
 
 # Load data pengujian dari JSON
 login_data = read_data("login_data.json")
+
 
 def test_login_valid(page):
     """Melakukan login menggunakan data yang valid"""
@@ -32,17 +34,15 @@ def test_login_valid(page):
     expect(dashboard_page.heading).to_be_visible()
 
 
-@pytest.mark.parametrize("data_key", [
-    "invalid_username",
-    "invalid_password",
-    "invalid_credentials"
-])
+@pytest.mark.parametrize(
+    "data_key", ["invalid_username", "invalid_password", "invalid_credentials"]
+)
 def test_login_invalid(page, data_key):
-    """"Melakukan login menggunakan data yang tidak valid"""
+    """ "Melakukan login menggunakan data yang tidak valid"""
     # ARRANGE (Persiapan data & state awal)
     # ambil data
     data = login_data[data_key]
-    
+
     # buka halaman login
     login_page = LoginPage(page)
     login_page.open()
@@ -55,13 +55,10 @@ def test_login_invalid(page, data_key):
     expect(login_page.error_message).to_be_visible()
     expect(login_page.error_message).to_contain_text("Invalid credentials")
 
-@pytest.mark.parametrize("data_key", [
-    "empty_username",
-    "empty_password",
-    "empty_both"
-])
+
+@pytest.mark.parametrize("data_key", ["empty_username", "empty_password", "empty_both"])
 def test_login_empty_field(page, data_key):
-    """"Melakukan login dengan form dibiarkan kosong"""
+    """ "Melakukan login dengan form dibiarkan kosong"""
     # ARRANGE (Persiapan data & state awal)
     # ambil data
     data = login_data[data_key]

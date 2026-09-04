@@ -1,21 +1,17 @@
-from playwright.sync_api import expect, Page
+from playwright.sync_api import Page, expect
 
 from config import BASE_URL
 from pages.admin.add_user_page import AddUserPage
 from pages.admin.admin_page import AdminPage
 from pages.admin.edit_user_page import EditUserPage
-from pages.login_page import LoginPage
 from pages.sidebar import Sidebar
 from utils.data_factory import generate_username
 from utils.read_data import read_data
 
-
 user_data = read_data("user_data.json")
 
 add_user_data = user_data["add_user"]
-add_user_data["username"] = generate_username(
-    add_user_data["username_prefix"]
-)
+add_user_data["username"] = generate_username(add_user_data["username_prefix"])
 username = add_user_data["username"]
 
 edit_user_data = user_data["edit_user"]
@@ -42,17 +38,13 @@ def test_add_user(logged_in_page: Page):
     expect(page.get_by_text("Successfully Saved")).to_be_visible()
 
     # pastikan kembali ke admin page
-    expect(page).to_have_url(
-        f"{BASE_URL}/web/index.php/admin/viewSystemUsers"
-    )
+    expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
 
     # cari user yang baru dibuat
     admin_page.search(username)
 
     # pastikan user berhasil ditambahkan
-    expect(
-        admin_page.user_row(username)
-    ).to_be_visible()
+    expect(admin_page.user_row(username)).to_be_visible()
 
 
 def test_edit_user(logged_in_page: Page, api_create_user: str):
@@ -76,17 +68,13 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
     # edit user dan simpan employee yang dipilih
     selected_employee = edit_user_page.edit_user(edit_user_data)
     name_parts = selected_employee.split()
-    expected_employee = (
-        f"{name_parts[0]} {name_parts[-1]}"
-    )
+    expected_employee = f"{name_parts[0]} {name_parts[-1]}"
 
     # validasi nunggu sampe alert sukses update muncul
     expect(page.get_by_text("Successfully Updated")).to_be_visible()
 
     # pastikan kembali ke admin page
-    expect(page).to_have_url(
-        f"{BASE_URL}/web/index.php/admin/viewSystemUsers"
-    )
+    expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
 
     # cari user yang sudah diedit
     admin_page.search(api_create_user)
@@ -100,10 +88,11 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
     expect(row.get_by_role("cell").nth(3)).to_have_text(expected_employee)
     expect(row.get_by_role("cell").nth(4)).to_have_text(edit_user_data["status"])
 
+
 def test_delete_user(logged_in_page: Page, api_create_user: str):
     """Menghapus data user"""
     page = logged_in_page
-    
+
     admin_page = AdminPage(page)
     sidebar = Sidebar(page)
 

@@ -1,6 +1,7 @@
 from playwright.sync_api import Page
 
-class Sidebar():
+
+class Sidebar:
     def __init__(self, page: Page):
 
         self.admin = page.get_by_role("link", name="Admin")
