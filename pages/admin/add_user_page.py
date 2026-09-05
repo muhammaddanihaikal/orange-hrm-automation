@@ -7,7 +7,6 @@ class AddUserPage:
 
         self.PATH = "/web/index.php/admin/saveSystemUser"
         self.field_container = page.locator(".oxd-input-group")
-
         self.user_role = self.field_container.filter(has_text="User Role").locator(
             ".oxd-select-text"
         )
@@ -19,7 +18,6 @@ class AddUserPage:
             .get_by_role("listbox")
             .locator("div")
         )
-
         self.status = self.field_container.filter(has_text="Status").locator(
             ".oxd-select-text"
         )

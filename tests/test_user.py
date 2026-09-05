@@ -41,10 +41,33 @@ def test_add_user(logged_in_page: Page):
     expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
 
     # cari user yang baru dibuat
-    admin_page.search(username)
+    admin_page.filter_by_username(username)
 
     # pastikan user berhasil ditambahkan
     expect(admin_page.user_row(username)).to_be_visible()
+
+
+def test_add_user_empty(logged_in_page: Page):
+    """Negative Test: Memastikan muncul error 'Required' jika form kosong"""
+    page = logged_in_page
+    admin_page = AdminPage(page)
+    add_user_page = AddUserPage(page)
+    sidebar = Sidebar(page)
+
+    # 1. Arrange (Persiapan)
+    # buka menu admin lalu klik tombol add
+    sidebar.admin.click()
+    admin_page.add_btn.click()
+
+    # 2. Act (Aksi)
+    # sengaja tidak isi form dan langsung klik save
+    add_user_page.save_btn.click()
+
+    # 3. Assert (Validasi)
+    # validasi 1 : tulisan 'Required' harus muncul 5 buah
+    # validasi 2 : tulisan 'Passwords do not match' muncul 1 buat
+    expect(page.get_by_text("Required", exact=True)).to_have_count(5)
+    expect(page.get_by_text("Passwords do not match")).to_be_visible()
 
 
 def test_edit_user(logged_in_page: Page, api_create_user: str):
@@ -59,7 +82,7 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
     sidebar.admin.click()
 
     # cari user
-    admin_page.search(api_create_user)
+    admin_page.filter_by_username(api_create_user)
     expect(admin_page.user_row(api_create_user)).to_be_visible()
 
     # buka halaman edit
@@ -77,7 +100,7 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
     expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
 
     # cari user yang sudah diedit
-    admin_page.search(api_create_user)
+    admin_page.filter_by_username(api_create_user)
 
     # pastikan user masih ada
     row = admin_page.user_row(api_create_user)
@@ -100,13 +123,26 @@ def test_delete_user(logged_in_page: Page, api_create_user: str):
     sidebar.admin.click()
 
     # cari user dan validasi
-    admin_page.search(api_create_user)
+    admin_page.filter_by_username(api_create_user)
     expect(admin_page.user_row(api_create_user)).to_be_visible()
 
     # hapus user
     admin_page.delete_user(api_create_user)
 
     # cari user dan validasi
-    admin_page.search(api_create_user)
+    admin_page.filter_by_username(api_create_user)
     expect(admin_page.user_row(api_create_user)).to_be_hidden()
     expect(page.get_by_text("No Records Found").first).to_be_visible()
+
+
+def test_filter_user(logged_in_page: Page):
+    page = logged_in_page
+    sidebar = Sidebar(page)
+    admin_page = AdminPage(page)
+
+    # 1. Arrange
+    sidebar.admin.click()
+
+    # 2. Act
+
+    # 3. Assert
