@@ -135,14 +135,84 @@ def test_delete_user(logged_in_page: Page, api_create_user: str):
     expect(page.get_by_text("No Records Found").first).to_be_visible()
 
 
-def test_filter_user(logged_in_page: Page):
+def test_filter_user_by_username(logged_in_page: Page, api_create_user: str):
+    """Filter user berdasarkan username dan memastikan user muncul di tabel."""
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
+    username = api_create_user
 
     # 1. Arrange
     sidebar.admin.click()
 
     # 2. Act
+    admin_page.filter_by_username(username)
 
     # 3. Assert
+    # memeastikan user dengan username yg di filter ada di tabel
+    expect(admin_page.user_row(username)).to_be_visible()
+
+
+def test_filter_user_by_user_role(logged_in_page: Page):
+    """Filter user berdasarkan role dan memastikan semua baris di tabel sesuai role."""
+    page = logged_in_page
+    sidebar = Sidebar(page)
+    admin_page = AdminPage(page)
+
+    # 1. Arrange (persiapan)
+    sidebar.admin.click()
+
+    # 2. Act (aksi)
+    admin_page.filter_by_user_role("Admin")
+
+    # 3. Assert (validasi)
+    # ambil semua baris data yg ada di tabel
+    rows = admin_page.user_table.locator(".oxd-table-card")
+
+    # pastikan tabelnya ngga kosong (syarat loop)
+    expect(rows.first).to_be_visible()
+
+    # LOOP SEMUA BARIS: pastikan semua baris pada kolom "User Role" bernilai "Admin"
+    for row in rows.all():
+        expect(row.get_by_role("cell").nth(2)).to_have_text("Admin")
+
+
+def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: str):
+    """Filter user berdasarkan nama karyawan dan memastikan user muncul di tabel."""
+    page = logged_in_page
+    sidebar = Sidebar(page)
+    admin_page = AdminPage(page)
+    username = api_create_user
+
+    # 1. Arrange (persiapan)
+    sidebar.admin.click()
+
+    # 2. Act (aksi)
+    admin_page.filter_by_employee_name("Budi")
+
+    # 3. Assert (validasi)
+    expect(admin_page.user_row(username)).to_be_visible()
+
+
+def test_filter_user_by_status(logged_in_page: Page):
+    """Filter user berdasarkan status dan memastikan semua baris di tabel sesuai status."""
+    page = logged_in_page
+    sidebar = Sidebar(page)
+    admin_page = AdminPage(page)
+
+    # 1. Arrange (persiapan)
+    sidebar.admin.click()
+
+    # 2. Act (aksi)
+    admin_page.filter_by_status("Disabled")
+
+    # 3. Assert (validasi)
+    # ambil semua baris data yg ada di tabel
+    rows = admin_page.user_table.locator(".oxd-table-card")
+
+    # pastikan tabelnya ngga kosong (syarat loop)
+    expect(rows.first).to_be_visible()
+
+    # LOOP SEMUA BARIS: pastikan semua baris pada kolom "Status" bernilai "Disabled"
+    for row in rows.all():
+        expect(row.get_by_role("cell").nth(4)).to_have_text("Disabled")

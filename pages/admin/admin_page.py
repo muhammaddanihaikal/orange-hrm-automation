@@ -40,14 +40,21 @@ class AdminPage:
         self.user_table = page.get_by_role("table")
         self.confirm_delete_btn = page.get_by_role("button", name="Yes, Delete")
 
+    # ==== FUNCTION FILTER SECTION ====
     def filter_by_username(self, username: str):
         self.username_filter.fill(username)
-        self.search_btn.click()
+
+        # tunggu response seleai baru lanjut
+        with self.page.expect_response("**/api/v2/admin/users*"):
+            self.search_btn.click()
 
     def filter_by_user_role(self, user_role: str):
         self.user_role_filter.click()
         self.page.get_by_role("option", name=user_role).click()
-        self.search_btn.click()
+
+        # tunggu response seleai baru lanjut
+        with self.page.expect_response("**/api/v2/admin/users*"):
+            self.search_btn.click()
 
     def filter_by_employee_name(self, employee_name: str):
         self.employee_name_filter.fill(employee_name)
@@ -58,13 +65,20 @@ class AdminPage:
         # nunggu employee name option muncul dan klik
         self.employee_name_option.first.wait_for(state="visible")
         self.employee_name_option.first.click()
-        self.search_btn.click()
+
+        # tunggu response seleai baru lanjut
+        with self.page.expect_response("**/api/v2/admin/users*"):
+            self.search_btn.click()
 
     def filter_by_status(self, status: str):
         self.status_filter.click()
         self.page.get_by_role("option", name=status).click()
-        self.search_btn.click()
 
+        # tunggu response seleai baru lanjut
+        with self.page.expect_response("**/api/v2/admin/users*"):
+            self.search_btn.click()
+
+    # ===== FUNCTION TABLE SECTION ====
     # Cari baris user di tabel untuk keperluan assertion
     def user_row(self, username):
         return self.user_table.get_by_role("row").filter(has_text=username)
