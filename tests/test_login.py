@@ -13,7 +13,7 @@ login_data = read_data("login_data.json")
 
 @allure.title("[TC-AUTH-01] Melakukan login menggunakan data yang valid")
 def test_login_valid(page):
-    # ARRANGE - Persiapan Awal
+    # 1. Arrange (persiapan)
     # ambil data
     data = login_data["valid_login"]
 
@@ -25,11 +25,11 @@ def test_login_valid(page):
     login_page.open()
     expect(login_page.heading).to_be_visible()
 
-    # ACT - melakukan login
+    # 2. Act (aksi)
     with page.expect_response("**/auth/validate"):
         login_page.login(data["username"], data["password"])
 
-    # ASSERT - validasi
+    # 3. Assert (validasi)
     expect(page).to_have_url(f"{BASE_URL}{dashboard_page.PATH}")
     expect(dashboard_page.heading).to_be_visible()
 
@@ -39,7 +39,7 @@ def test_login_valid(page):
     "data_key", ["invalid_username", "invalid_password", "invalid_credentials"]
 )
 def test_login_invalid(page, data_key):
-    # ARRANGE (Persiapan data & state awal)
+    # 1. Arrange (persiapan)
     # ambil data
     data = login_data[data_key]
 
@@ -47,11 +47,11 @@ def test_login_invalid(page, data_key):
     login_page = LoginPage(page)
     login_page.open()
 
-    # ACT - melakukan login
+    # 2. Act (aksi)
     with page.expect_response("**/auth/validate"):
         login_page.login(data["username"], data["password"])
 
-    # ASSERT - validasi
+    # 3. Assert (validasi)
     expect(login_page.error_message).to_be_visible()
     expect(login_page.error_message).to_contain_text("Invalid credentials")
 
@@ -59,7 +59,7 @@ def test_login_invalid(page, data_key):
 @allure.title("[TC-AUTH-03] Melakukan login tanpa mengisi field username dan password ({data_key})")
 @pytest.mark.parametrize("data_key", ["empty_username", "empty_password", "empty_both"])
 def test_login_empty_field(page, data_key):
-    # ARRANGE (Persiapan data & state awal)
+    # 1. Arrange (persiapan)
     # ambil data
     data = login_data[data_key]
 
@@ -67,8 +67,8 @@ def test_login_empty_field(page, data_key):
     login_page = LoginPage(page)
     login_page.open()
 
-    # ACT - melakukan login
+    # 2. Act (aksi)
     login_page.login(data["username"], data["password"])
 
-    # ASSERT - validasi tulisan Required
+    # 3. Assert (validasi)
     expect(login_page.required_message).to_be_visible()
