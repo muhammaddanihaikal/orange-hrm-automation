@@ -40,7 +40,9 @@ def test_add_user(logged_in_page: Page):
     expect(admin_page.user_row(username)).to_be_visible()
 
 
-@allure.title("[TC-ADMIN-02] Menambahkan data System Users tanpa mengisi field mandatory")
+@allure.title(
+    "[TC-ADMIN-02] Menambahkan data System Users tanpa mengisi field mandatory"
+)
 def test_add_user_empty(logged_in_page: Page):
     page = logged_in_page
     admin_page = AdminPage(page)
@@ -160,7 +162,9 @@ def test_filter_user_by_user_role(logged_in_page: Page):
         expect(row.get_by_role("cell").nth(2)).to_have_text("Admin")
 
 
-@allure.title("[TC-ADMIN-07] Melakukan filter data System Users berdasarkan Employee Name")
+@allure.title(
+    "[TC-ADMIN-07] Melakukan filter data System Users berdasarkan Employee Name"
+)
 def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: str):
     page = logged_in_page
     sidebar = Sidebar(page)

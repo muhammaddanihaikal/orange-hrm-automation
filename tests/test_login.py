@@ -34,7 +34,9 @@ def test_login_valid(page):
     expect(dashboard_page.heading).to_be_visible()
 
 
-@allure.title("[TC-AUTH-02] Melakukan login menggunakan data yang tidak valid ({data_key})")
+@allure.title(
+    "[TC-AUTH-02] Melakukan login menggunakan data yang tidak valid ({data_key})"
+)
 @pytest.mark.parametrize(
     "data_key", ["invalid_username", "invalid_password", "invalid_credentials"]
 )
@@ -56,7 +58,9 @@ def test_login_invalid(page, data_key):
     expect(login_page.error_message).to_contain_text("Invalid credentials")
 
 
-@allure.title("[TC-AUTH-03] Melakukan login tanpa mengisi field username dan password ({data_key})")
+@allure.title(
+    "[TC-AUTH-03] Melakukan login tanpa mengisi field username dan password ({data_key})"
+)
 @pytest.mark.parametrize("data_key", ["empty_username", "empty_password", "empty_both"])
 def test_login_empty_field(page, data_key):
     # 1. Arrange (persiapan)
