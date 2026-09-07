@@ -226,6 +226,7 @@ def test_filter_user_by_status(logged_in_page: Page):
 
 
 def test_reset_filter(logged_in_page: Page):
+    """Memastikan tombol Reset mengosongkan seluruh filter dan memulihkan tabel."""
     page = logged_in_page
     admin_page = AdminPage(page)
     sidebar = Sidebar(page)

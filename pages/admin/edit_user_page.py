@@ -49,6 +49,7 @@ class EditUserPage:
         self.save_btn = page.get_by_role("button", name="Save")
         
     def edit_user(self, data):
+        """Mengubah data user melalui form Edit User."""
         # isi user role
         self.user_role.click()
         self.page.get_by_role(

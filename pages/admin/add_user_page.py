@@ -33,6 +33,7 @@ class AddUserPage:
         self.save_btn = page.get_by_role("button", name="Save")
 
     def add_user(self, data):
+        """Menambahkan user baru melalui form Add User."""
         # isi user role
         self.user_role.click()
         self.page.get_by_role("option", name=data["user_role"]).click()

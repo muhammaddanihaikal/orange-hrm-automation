@@ -42,13 +42,16 @@ class AdminPage:
 
     # ==== FUNCTION FILTER SECTION ====
     def filter_by_username(self, username: str):
+        """Mengisi input filter Username."""
         self.username_filter.fill(username)
 
     def filter_by_user_role(self, user_role: str):
+        """Memilih opsi pada filter User Role."""
         self.user_role_filter.click()
         self.page.get_by_role("option", name=user_role).click()
 
     def filter_by_employee_name(self, employee_name: str):
+        """Mengisi dan memilih opsi autocomplete pada filter Employee Name."""
         self.employee_name_filter.fill(employee_name)
 
         # nunggu searching.. menghilang
@@ -59,15 +62,18 @@ class AdminPage:
         self.employee_name_option.first.click()
 
     def filter_by_status(self, status: str):
+        """Memilih opsi pada filter Status."""
         self.status_filter.click()
         self.page.get_by_role("option", name=status).click()
 
     def search(self):
+        """Menekan tombol Search dan menunggu respon API pencarian selesai."""
         # tunggu response selesai baru lanjut
         with self.page.expect_response("**/api/v2/admin/users*"):
             self.search_btn.click()
 
     def reset(self):
+        """Menekan tombol Reset dan menunggu reload data dari API selesai."""
         # tunggu response selesai baru lanjut
         with self.page.expect_response("**/api/v2/admin/users*"):
             self.reset_btn.click()
@@ -78,11 +84,13 @@ class AdminPage:
         return self.user_table.get_by_role("row").filter(has_text=username)
 
     def edit(self, username: str):
+        """Mengeklik tombol edit pada baris user yang dipilih."""
         self.user_row(username).get_by_role("button").filter(
             has=self.page.locator("i.bi-pencil-fill")
         ).click()
 
     def delete(self, username: str):
+        """Mengeklik tombol hapus dan mengonfirmasi penghapusan user."""
         self.user_row(username).get_by_role("button").filter(
             has=self.page.locator("i.bi-trash")
         ).click()
