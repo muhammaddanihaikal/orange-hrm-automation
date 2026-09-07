@@ -42,6 +42,7 @@ def test_add_user(logged_in_page: Page):
 
     # cari user yang baru dibuat
     admin_page.filter_by_username(username)
+    admin_page.search()
 
     # pastikan user berhasil ditambahkan
     expect(admin_page.user_row(username)).to_be_visible()
@@ -101,6 +102,7 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
 
     # cari user yang sudah diedit
     admin_page.filter_by_username(api_create_user)
+    admin_page.search()
 
     # pastikan user masih ada
     row = admin_page.user_row(api_create_user)
@@ -131,6 +133,7 @@ def test_delete_user(logged_in_page: Page, api_create_user: str):
 
     # cari user dan validasi
     admin_page.filter_by_username(api_create_user)
+    admin_page.search()
     expect(admin_page.user_row(api_create_user)).to_be_hidden()
     expect(page.get_by_text("No Records Found").first).to_be_visible()
 
@@ -147,6 +150,7 @@ def test_filter_user_by_username(logged_in_page: Page, api_create_user: str):
 
     # 2. Act
     admin_page.filter_by_username(username)
+    admin_page.search()
 
     # 3. Assert
     # memeastikan user dengan username yg di filter ada di tabel
@@ -164,6 +168,7 @@ def test_filter_user_by_user_role(logged_in_page: Page):
 
     # 2. Act (aksi)
     admin_page.filter_by_user_role("Admin")
+    admin_page.search()
 
     # 3. Assert (validasi)
     # ambil semua baris data yg ada di tabel
@@ -189,6 +194,7 @@ def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: str
 
     # 2. Act (aksi)
     admin_page.filter_by_employee_name("Budi")
+    admin_page.search()
 
     # 3. Assert (validasi)
     expect(admin_page.user_row(username)).to_be_visible()
@@ -205,6 +211,7 @@ def test_filter_user_by_status(logged_in_page: Page):
 
     # 2. Act (aksi)
     admin_page.filter_by_status("Disabled")
+    admin_page.search()
 
     # 3. Assert (validasi)
     # ambil semua baris data yg ada di tabel
@@ -216,3 +223,25 @@ def test_filter_user_by_status(logged_in_page: Page):
     # LOOP SEMUA BARIS: pastikan semua baris pada kolom "Status" bernilai "Disabled"
     for row in rows.all():
         expect(row.get_by_role("cell").nth(4)).to_have_text("Disabled")
+
+
+def test_reset_filter(logged_in_page: Page):
+    page = logged_in_page
+    admin_page = AdminPage(page)
+    sidebar = Sidebar(page)
+
+    # 1. Arrange (persiapan)
+    sidebar.admin.click()
+
+    # 2. Act (aksi)
+    admin_page.filter_by_username("dani")
+    admin_page.filter_by_user_role("Admin")
+    admin_page.filter_by_employee_name("Budi")
+    admin_page.filter_by_status("Disabled")
+    admin_page.reset()
+
+    # 3. Assert (validasi)
+    expect(admin_page.username_filter).to_have_value("")
+    expect(admin_page.user_role_filter).to_contain_text("-- Select --")
+    expect(admin_page.employee_name_filter).to_have_value("")
+    expect(admin_page.status_filter).to_contain_text("-- Select --")
