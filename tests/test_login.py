@@ -11,7 +11,7 @@ from utils.read_data import read_data
 login_data = read_data("login_data.json")
 
 
-@allure.title("Melakukan login menggunakan data yang valid")
+@allure.title("[TC-AUTH-01] Melakukan login menggunakan data yang valid")
 def test_login_valid(page):
     # ARRANGE - Persiapan Awal
     # ambil data
@@ -34,7 +34,7 @@ def test_login_valid(page):
     expect(dashboard_page.heading).to_be_visible()
 
 
-@allure.title("Melakukan login menggunakan data yang tidak valid ({data_key})")
+@allure.title("[TC-AUTH-02] Melakukan login menggunakan data yang tidak valid ({data_key})")
 @pytest.mark.parametrize(
     "data_key", ["invalid_username", "invalid_password", "invalid_credentials"]
 )
@@ -56,7 +56,7 @@ def test_login_invalid(page, data_key):
     expect(login_page.error_message).to_contain_text("Invalid credentials")
 
 
-@allure.title("Melakukan login tanpa mengisi field username dan password ({data_key})")
+@allure.title("[TC-AUTH-03] Melakukan login tanpa mengisi field username dan password ({data_key})")
 @pytest.mark.parametrize("data_key", ["empty_username", "empty_password", "empty_both"])
 def test_login_empty_field(page, data_key):
     # ARRANGE (Persiapan data & state awal)
