@@ -233,15 +233,23 @@ def test_reset_filter(logged_in_page: Page):
     # 1. Arrange (persiapan)
     sidebar.admin.click()
 
+    # ambil semua teks jumlah data awal
+    initial_records = page.get_by_text("Records Found").first.inner_text()
+
     # 2. Act (aksi)
     admin_page.filter_by_username("dani")
     admin_page.filter_by_user_role("Admin")
     admin_page.filter_by_employee_name("Budi")
     admin_page.filter_by_status("Disabled")
+    admin_page.search()
     admin_page.reset()
 
     # 3. Assert (validasi)
+    # validasi: filter terreset
     expect(admin_page.username_filter).to_have_value("")
     expect(admin_page.user_role_filter).to_contain_text("-- Select --")
     expect(admin_page.employee_name_filter).to_have_value("")
     expect(admin_page.status_filter).to_contain_text("-- Select --")
+
+    # validasi: data kembali seperti semula
+    expect(page.get_by_text("Records Found").first).to_have_text(initial_records)
