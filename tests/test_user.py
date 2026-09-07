@@ -12,7 +12,7 @@ from utils.read_data import read_data
 USER_DATA = read_data("user_data.json")
 
 
-@allure.title("[TC-ADMIN-01] Menambahkan data System Users baru")
+@allure.title("Menambahkan data System Users")
 def test_add_user(logged_in_page: Page):
     page = logged_in_page
     admin_page = AdminPage(page)
@@ -40,7 +40,7 @@ def test_add_user(logged_in_page: Page):
     expect(admin_page.user_row(username)).to_be_visible()
 
 
-@allure.title("[TC-ADMIN-02] Menambahkan data System Users tanpa mengisi form (form kosong)")
+@allure.title("Menambahkan data System Users tanpa mengisi field mandatory")
 def test_add_user_empty(logged_in_page: Page):
     page = logged_in_page
     admin_page = AdminPage(page)
@@ -59,7 +59,7 @@ def test_add_user_empty(logged_in_page: Page):
     expect(page.get_by_text("Passwords do not match")).to_be_visible()
 
 
-@allure.title("[TC-ADMIN-03] Mengubah data System Users yang sudah ada")
+@allure.title("Mengubah data System Users")
 def test_edit_user(logged_in_page: Page, api_create_user: str):
     page = logged_in_page
     admin_page = AdminPage(page)
@@ -94,7 +94,7 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
     expect(row.get_by_role("cell").nth(4)).to_have_text(edit_user_data["status"])
 
 
-@allure.title("[TC-ADMIN-04] Menghapus data System Users melalui tombol aksi tabel")
+@allure.title("Menghapus data System Users")
 def test_delete_user(logged_in_page: Page, api_create_user: str):
     page = logged_in_page
     admin_page = AdminPage(page)
@@ -116,7 +116,7 @@ def test_delete_user(logged_in_page: Page, api_create_user: str):
     expect(page.get_by_text("No Records Found").first).to_be_visible()
 
 
-@allure.title("[TC-ADMIN-05] Melakukan filter data System Users berdasarkan Username")
+@allure.title("Melakukan filter data System Users berdasarkan Username")
 def test_filter_user_by_username(logged_in_page: Page, api_create_user: str):
     page = logged_in_page
     sidebar = Sidebar(page)
@@ -135,7 +135,7 @@ def test_filter_user_by_username(logged_in_page: Page, api_create_user: str):
     expect(admin_page.user_row(username)).to_be_visible()
 
 
-@allure.title("[TC-ADMIN-06] Melakukan filter data System Users berdasarkan User Role")
+@allure.title("Melakukan filter data System Users berdasarkan User Role")
 def test_filter_user_by_user_role(logged_in_page: Page):
     page = logged_in_page
     sidebar = Sidebar(page)
@@ -160,7 +160,7 @@ def test_filter_user_by_user_role(logged_in_page: Page):
         expect(row.get_by_role("cell").nth(2)).to_have_text("Admin")
 
 
-@allure.title("[TC-ADMIN-07] Melakukan filter data System Users berdasarkan Employee Name")
+@allure.title("Melakukan filter data System Users berdasarkan Employee Name")
 def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: str):
     page = logged_in_page
     sidebar = Sidebar(page)
@@ -178,7 +178,7 @@ def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: str
     expect(admin_page.user_row(username)).to_be_visible()
 
 
-@allure.title("[TC-ADMIN-08] Melakukan filter data System Users berdasarkan Status")
+@allure.title("Melakukan filter data System Users berdasarkan Status")
 def test_filter_user_by_status(logged_in_page: Page):
     page = logged_in_page
     sidebar = Sidebar(page)
@@ -203,7 +203,7 @@ def test_filter_user_by_status(logged_in_page: Page):
         expect(row.get_by_role("cell").nth(4)).to_have_text("Disabled")
 
 
-@allure.title("[TC-ADMIN-09] Mereset filter pencarian System Users ke kondisi awal")
+@allure.title("Mereset filter System Users")
 def test_reset_filter(logged_in_page: Page):
     page = logged_in_page
     admin_page = AdminPage(page)
@@ -234,7 +234,7 @@ def test_reset_filter(logged_in_page: Page):
     expect(page.get_by_text("Records Found").first).to_have_text(initial_records)
 
 
-@allure.title("[TC-ADMIN-10] Melakukan filter data System Users dengan kombinasi beberapa kriteria")
+@allure.title("Melakukan filter data System Users kombinasi")
 def test_filter_user_combination(logged_in_page: Page):
     page = logged_in_page
     sidebar = Sidebar(page)
