@@ -254,3 +254,34 @@ def test_reset_filter(logged_in_page: Page):
 
     # validasi: data kembali seperti semula
     expect(page.get_by_text("Records Found").first).to_have_text(initial_records)
+
+
+def test_filter_user_combination(logged_in_page: Page):
+    page = logged_in_page
+    sidebar = Sidebar(page)
+    admin_page = AdminPage(page)
+
+    # 1. Arrange (persiapan)
+    sidebar.admin.click()
+
+    # 2. Act (aksi)
+    admin_page.filter_by_username("admin1")
+    admin_page.filter_by_user_role("Admin")
+    admin_page.filter_by_employee_name("Budi")
+    admin_page.filter_by_status("Enabled")
+    admin_page.search()
+
+    # 3. Assert (validasi)
+    # pastiin ada satu data
+    rows = admin_page.user_table.locator(".oxd-table-card")
+    expect(rows.first).to_be_visible()
+
+    for row in rows.all():
+        # cek kolom username
+        expect(row.get_by_role("cell").nth(1)).to_have_text("admin1")
+        # cek kolom user role
+        expect(row.get_by_role("cell").nth(2)).to_have_text("Admin")
+        # cek kolom employee name
+        expect(row.get_by_role("cell").nth(3)).to_contain_text("Budi")
+        # cek kolom status
+        expect(row.get_by_role("cell").nth(4)).to_have_text("Enabled")
