@@ -38,6 +38,7 @@ class AdminPage:
         # === TABEL USER ===
         self.add_btn = page.get_by_role("button", name="Add")
         self.user_table = page.get_by_role("table")
+        self.table_rows = self.user_table.locator(".oxd-table-card")
         self.confirm_delete_btn = page.get_by_role("button", name="Yes, Delete")
 
     # ==== FUNCTION FILTER SECTION ====

@@ -8,43 +8,33 @@ from pages.sidebar import Sidebar
 from utils.data_factory import generate_username
 from utils.read_data import read_data
 
-user_data = read_data("user_data.json")
-
-add_user_data = user_data["add_user"]
-add_user_data["username"] = generate_username(add_user_data["username_prefix"])
-username = add_user_data["username"]
-
-edit_user_data = user_data["edit_user"]
-
 
 def test_add_user(logged_in_page: Page):
-    """Menambah data user"""
+    """Menambah data user baru dan memvalidasi kemunculannya di tabel."""
     page = logged_in_page
-
     admin_page = AdminPage(page)
     add_user_page = AddUserPage(page)
     sidebar = Sidebar(page)
 
-    # buka admin page
-    sidebar.admin.click()
+    # 1. Arrange (persiapan)
+    user_data = read_data("user_data.json")
+    add_user_data = user_data["add_user"].copy()
+    username = generate_username(add_user_data["username_prefix"])
+    add_user_data["username"] = username
 
-    # buka form add user
+    sidebar.admin.click()
     admin_page.add_btn.click()
 
-    # tambah user
+    # 2. Act (aksi)
     add_user_page.add_user(add_user_data)
 
-    # validasi nunggu sampe alert sukses saves muncul
+    # 3. Assert (validasi)
     expect(page.get_by_text("Successfully Saved")).to_be_visible()
-
-    # pastikan kembali ke admin page
     expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
 
-    # cari user yang baru dibuat
+    # cari user yang baru dibuat dan pastikan ada di tabel
     admin_page.filter_by_username(username)
     admin_page.search()
-
-    # pastikan user berhasil ditambahkan
     expect(admin_page.user_row(username)).to_be_visible()
 
 
@@ -55,83 +45,70 @@ def test_add_user_empty(logged_in_page: Page):
     add_user_page = AddUserPage(page)
     sidebar = Sidebar(page)
 
-    # 1. Arrange (Persiapan)
-    # buka menu admin lalu klik tombol add
+    # 1. Arrange (persiapan)
     sidebar.admin.click()
     admin_page.add_btn.click()
 
-    # 2. Act (Aksi)
-    # sengaja tidak isi form dan langsung klik save
+    # 2. Act (aksi)
     add_user_page.save_btn.click()
 
-    # 3. Assert (Validasi)
-    # validasi 1 : tulisan 'Required' harus muncul 5 buah
-    # validasi 2 : tulisan 'Passwords do not match' muncul 1 buat
+    # 3. Assert (validasi)
     expect(page.get_by_text("Required", exact=True)).to_have_count(5)
     expect(page.get_by_text("Passwords do not match")).to_be_visible()
 
 
 def test_edit_user(logged_in_page: Page, api_create_user: str):
-    """Mengubah data user"""
+    """Mengubah data user dan memvalidasi perubahannya di tabel."""
     page = logged_in_page
-
     admin_page = AdminPage(page)
     edit_user_page = EditUserPage(page)
     sidebar = Sidebar(page)
 
-    # buka admin page
+    # 1. Arrange (persiapan)
+    user_data = read_data("user_data.json")
+    edit_user_data = user_data["edit_user"]
+
     sidebar.admin.click()
-
-    # cari user
     admin_page.filter_by_username(api_create_user)
+    admin_page.search()
     expect(admin_page.user_row(api_create_user)).to_be_visible()
-
-    # buka halaman edit
     admin_page.edit(api_create_user)
 
-    # edit user dan simpan employee yang dipilih
+    # 2. Act (aksi)
     selected_employee = edit_user_page.edit_user(edit_user_data)
     name_parts = selected_employee.split()
     expected_employee = f"{name_parts[0]} {name_parts[-1]}"
 
-    # validasi nunggu sampe alert sukses update muncul
+    # 3. Assert (validasi)
     expect(page.get_by_text("Successfully Updated")).to_be_visible()
-
-    # pastikan kembali ke admin page
     expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
 
-    # cari user yang sudah diedit
+    # cari user yang sudah diedit dan pastikan data di tabel terupdate
     admin_page.filter_by_username(api_create_user)
     admin_page.search()
-
-    # pastikan user masih ada
     row = admin_page.user_row(api_create_user)
     expect(row).to_be_visible()
-
-    # validasi hasil edit
     expect(row.get_by_role("cell").nth(2)).to_have_text(edit_user_data["user_role"])
     expect(row.get_by_role("cell").nth(3)).to_have_text(expected_employee)
     expect(row.get_by_role("cell").nth(4)).to_have_text(edit_user_data["status"])
 
 
 def test_delete_user(logged_in_page: Page, api_create_user: str):
-    """Menghapus data user"""
+    """Menghapus data user dan memvalidasi user sudah tidak ada di tabel."""
     page = logged_in_page
-
     admin_page = AdminPage(page)
     sidebar = Sidebar(page)
 
-    # buka sidebar admin
+    # 1. Arrange (persiapan)
     sidebar.admin.click()
-
-    # cari user dan validasi
     admin_page.filter_by_username(api_create_user)
+    admin_page.search()
     expect(admin_page.user_row(api_create_user)).to_be_visible()
 
-    # hapus user
+    # 2. Act (aksi)
     admin_page.delete(api_create_user)
 
-    # cari user dan validasi
+    # 3. Assert (validasi)
     admin_page.filter_by_username(api_create_user)
     admin_page.search()
     expect(admin_page.user_row(api_create_user)).to_be_hidden()
@@ -145,14 +122,14 @@ def test_filter_user_by_username(logged_in_page: Page, api_create_user: str):
     admin_page = AdminPage(page)
     username = api_create_user
 
-    # 1. Arrange
+    # 1. Arrange (persiapan)
     sidebar.admin.click()
 
-    # 2. Act
+    # 2. Act (aksi)
     admin_page.filter_by_username(username)
     admin_page.search()
 
-    # 3. Assert
+    # 3. Assert (validasi)
     # memeastikan user dengan username yg di filter ada di tabel
     expect(admin_page.user_row(username)).to_be_visible()
 
@@ -172,7 +149,7 @@ def test_filter_user_by_user_role(logged_in_page: Page):
 
     # 3. Assert (validasi)
     # ambil semua baris data yg ada di tabel
-    rows = admin_page.user_table.locator(".oxd-table-card")
+    rows = admin_page.table_rows
 
     # pastikan tabelnya ngga kosong (syarat loop)
     expect(rows.first).to_be_visible()
@@ -215,7 +192,7 @@ def test_filter_user_by_status(logged_in_page: Page):
 
     # 3. Assert (validasi)
     # ambil semua baris data yg ada di tabel
-    rows = admin_page.user_table.locator(".oxd-table-card")
+    rows = admin_page.table_rows
 
     # pastikan tabelnya ngga kosong (syarat loop)
     expect(rows.first).to_be_visible()
@@ -257,6 +234,7 @@ def test_reset_filter(logged_in_page: Page):
 
 
 def test_filter_user_combination(logged_in_page: Page):
+    """Filter user kombinasi"""
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
@@ -273,7 +251,7 @@ def test_filter_user_combination(logged_in_page: Page):
 
     # 3. Assert (validasi)
     # pastiin ada satu data
-    rows = admin_page.user_table.locator(".oxd-table-card")
+    rows = admin_page.table_rows
     expect(rows.first).to_be_visible()
 
     for row in rows.all():
