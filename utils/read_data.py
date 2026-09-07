@@ -1,7 +1,8 @@
-from pathlib import Path
 import json
+from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data"
+
 
 def read_data(file_name: str):
     with open(DATA_DIR / file_name, encoding="utf-8") as f:
