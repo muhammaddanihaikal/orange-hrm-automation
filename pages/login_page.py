@@ -19,9 +19,11 @@ class LoginPage:
         self.required_message = page.locator("span").filter(has_text="Required").first
 
     def open(self):
+        """Membuka halaman login OrangeHRM."""
         self.page.goto(f"{BASE_URL}{self.PATH}")
 
     def login(self, username, password):
+        """Mengisi kredensial username dan password lalu menekan tombol login."""
         self.username.fill(username)
         self.password.fill(password)
         self.login_button.click()

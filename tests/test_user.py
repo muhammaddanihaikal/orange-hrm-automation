@@ -14,7 +14,6 @@ USER_DATA = read_data("user_data.json")
 
 @allure.title("[TC-ADMIN-01] Menambahkan data System Users baru")
 def test_add_user(logged_in_page: Page):
-    """[TC-ADMIN-01] Menambah data user baru dan memvalidasi kemunculannya di tabel."""
     page = logged_in_page
     admin_page = AdminPage(page)
     add_user_page = AddUserPage(page)
@@ -43,7 +42,6 @@ def test_add_user(logged_in_page: Page):
 
 @allure.title("[TC-ADMIN-02] Menambahkan data System Users tanpa mengisi form (form kosong)")
 def test_add_user_empty(logged_in_page: Page):
-    """[TC-ADMIN-02] Menambahkan data System Users tanpa mengisi form (form kosong)."""
     page = logged_in_page
     admin_page = AdminPage(page)
     add_user_page = AddUserPage(page)
@@ -63,7 +61,6 @@ def test_add_user_empty(logged_in_page: Page):
 
 @allure.title("[TC-ADMIN-03] Mengubah data System Users yang sudah ada")
 def test_edit_user(logged_in_page: Page, api_create_user: str):
-    """[TC-ADMIN-03] Mengubah data user dan memvalidasi perubahannya di tabel."""
     page = logged_in_page
     admin_page = AdminPage(page)
     edit_user_page = EditUserPage(page)
@@ -99,7 +96,6 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
 
 @allure.title("[TC-ADMIN-04] Menghapus data System Users melalui tombol aksi tabel")
 def test_delete_user(logged_in_page: Page, api_create_user: str):
-    """[TC-ADMIN-04] Menghapus data user dan memvalidasi user sudah tidak ada di tabel."""
     page = logged_in_page
     admin_page = AdminPage(page)
     sidebar = Sidebar(page)
@@ -122,7 +118,6 @@ def test_delete_user(logged_in_page: Page, api_create_user: str):
 
 @allure.title("[TC-ADMIN-05] Melakukan filter data System Users berdasarkan Username")
 def test_filter_user_by_username(logged_in_page: Page, api_create_user: str):
-    """[TC-ADMIN-05] Filter user berdasarkan username dan memastikan user muncul di tabel."""
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
@@ -142,7 +137,6 @@ def test_filter_user_by_username(logged_in_page: Page, api_create_user: str):
 
 @allure.title("[TC-ADMIN-06] Melakukan filter data System Users berdasarkan User Role")
 def test_filter_user_by_user_role(logged_in_page: Page):
-    """[TC-ADMIN-06] Filter user berdasarkan role dan memastikan semua baris di tabel sesuai role."""
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
@@ -168,7 +162,6 @@ def test_filter_user_by_user_role(logged_in_page: Page):
 
 @allure.title("[TC-ADMIN-07] Melakukan filter data System Users berdasarkan Employee Name")
 def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: str):
-    """[TC-ADMIN-07] Filter user berdasarkan nama karyawan dan memastikan user muncul di tabel."""
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
@@ -187,7 +180,6 @@ def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: str
 
 @allure.title("[TC-ADMIN-08] Melakukan filter data System Users berdasarkan Status")
 def test_filter_user_by_status(logged_in_page: Page):
-    """[TC-ADMIN-08] Filter user berdasarkan status dan memastikan semua baris di tabel sesuai status."""
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
@@ -213,7 +205,6 @@ def test_filter_user_by_status(logged_in_page: Page):
 
 @allure.title("[TC-ADMIN-09] Mereset filter pencarian System Users ke kondisi awal")
 def test_reset_filter(logged_in_page: Page):
-    """[TC-ADMIN-09] Memastikan tombol Reset mengosongkan seluruh filter dan memulihkan tabel."""
     page = logged_in_page
     admin_page = AdminPage(page)
     sidebar = Sidebar(page)
@@ -245,7 +236,6 @@ def test_reset_filter(logged_in_page: Page):
 
 @allure.title("[TC-ADMIN-10] Melakukan filter data System Users dengan kombinasi beberapa kriteria")
 def test_filter_user_combination(logged_in_page: Page):
-    """[TC-ADMIN-10] Filter user kombinasi: Role Admin, Employee Budi, dan Status Enabled."""
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
