@@ -73,18 +73,16 @@ class AdminPage:
             self.reset_btn.click()
 
     # ===== FUNCTION TABLE SECTION ====
-    # Cari baris user di tabel untuk keperluan assertion
-    def user_row(self, username):
+    def user_row(self, username: str):
+        """Mencari baris user spesifik di tabel (bisa dipakai aksi maupun assert)"""
         return self.user_table.get_by_role("row").filter(has_text=username)
 
-    # Action langsung Edit
-    def click_edit(self, username):
+    def edit(self, username: str):
         self.user_row(username).get_by_role("button").filter(
             has=self.page.locator("i.bi-pencil-fill")
         ).click()
 
-    # Action langsung Delete tuntas dengan popup
-    def delete_user(self, username):
+    def delete(self, username: str):
         self.user_row(username).get_by_role("button").filter(
             has=self.page.locator("i.bi-trash")
         ).click()

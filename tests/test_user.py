@@ -87,7 +87,7 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
     expect(admin_page.user_row(api_create_user)).to_be_visible()
 
     # buka halaman edit
-    admin_page.click_edit(api_create_user)
+    admin_page.edit(api_create_user)
 
     # edit user dan simpan employee yang dipilih
     selected_employee = edit_user_page.edit_user(edit_user_data)
@@ -129,7 +129,7 @@ def test_delete_user(logged_in_page: Page, api_create_user: str):
     expect(admin_page.user_row(api_create_user)).to_be_visible()
 
     # hapus user
-    admin_page.delete_user(api_create_user)
+    admin_page.delete(api_create_user)
 
     # cari user dan validasi
     admin_page.filter_by_username(api_create_user)
