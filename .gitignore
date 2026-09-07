@@ -12,3 +12,5 @@ wheels/
 # Temporary files
 ~$*
 .auth/
+allure-results/
+allure-report/
