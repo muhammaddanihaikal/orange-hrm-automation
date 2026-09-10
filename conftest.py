@@ -145,8 +145,8 @@ def api_create_bulk_users(logged_in_page: Page):
         user_id = post_response.json()["data"]["id"]
         created_user_ids.append(user_id)
 
-    # 2. Pinjamkan prefix dan list username ke fungsi test
-    yield {"prefix": prefix, "usernames": usernames}
+    # 2. Pinjamkan list username ke fungsi test
+    yield usernames
 
     # 3. Teardown: Hapus kedua user via API
     delete_response = logged_in_page.request.delete(

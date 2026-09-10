@@ -36,8 +36,9 @@ class AdminPage:
         self.reset_btn = page.get_by_role("button", name="Reset")
 
         # === TABEL USER ===
-        self.add_btn = page.get_by_role("button", name="Add")
         self.user_table = page.get_by_role("table")
+        self.delete_selected_btn = page.get_by_role("button", name="Delete Selected")
+        self.add_btn = page.get_by_role("button", name="Add")
         self.table_rows = self.user_table.locator(".oxd-table-card")
         self.confirm_delete_btn = page.get_by_role("button", name="Yes, Delete")
 
@@ -95,4 +96,11 @@ class AdminPage:
         self.user_row(username).get_by_role("button").filter(
             has=self.page.locator("i.bi-trash")
         ).click()
+        self.confirm_delete_btn.click()
+
+    def bulk_delete(self, usernames: list[str]):
+        """Mencentang daftar user yang diberikan dan menghapusnya secara massal."""
+        for username in usernames:
+            self.user_row(username).locator("label").click()
+        self.delete_selected_btn.click()
         self.confirm_delete_btn.click()

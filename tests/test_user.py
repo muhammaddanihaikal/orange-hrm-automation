@@ -268,3 +268,28 @@ def test_filter_user_combination(logged_in_page: Page):
         expect(row.get_by_role("cell").nth(3)).to_contain_text("Budi")
         # cek kolom status
         expect(row.get_by_role("cell").nth(4)).to_have_text("Enabled")
+
+
+@allure.title("[TC-ADMIN-11] Menghapus data System Users secara massal (Bulk Delete)")
+def test_bulk_delete_user(logged_in_page: Page, api_create_bulk_users: list[str]):
+    page = logged_in_page
+    sidebar = Sidebar(page)
+    admin_page = AdminPage(page)
+    usernames = api_create_bulk_users
+
+    # 1. Arrange (persiapan)
+    # buka menu admin
+    sidebar.admin.click()
+
+    # pastikan kedua user tumbal muncul di tabel sebelum dihapus
+    for username in usernames:
+        expect(admin_page.user_row(username)).to_be_visible()
+
+    # 2. Act (aksi)
+    # lakukan bulk delete pada kedua user tumbal
+    admin_page.bulk_delete(usernames)
+
+    # 3. Assert (validasi)
+    # pastikan kedua user sudah lenyap dari tabel
+    for username in usernames:
+        expect(admin_page.user_row(username)).to_be_hidden()
