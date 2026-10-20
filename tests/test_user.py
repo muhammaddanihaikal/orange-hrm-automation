@@ -62,20 +62,21 @@ def test_add_user_empty(logged_in_page: Page):
 
 
 @allure.title("[TC-ADMIN-03] Mengubah data System Users")
-def test_edit_user(logged_in_page: Page, api_create_user: str):
+def test_edit_user(logged_in_page: Page, api_create_user: dict):
     page = logged_in_page
     admin_page = AdminPage(page)
     edit_user_page = EditUserPage(page)
     sidebar = Sidebar(page)
+    username = api_create_user["username"]
 
     # 1. Arrange (persiapan)
     edit_user_data = USER_DATA["edit_user"]
 
     sidebar.admin.click()
-    admin_page.filter_by_username(api_create_user)
+    admin_page.filter_by_username(username)
     admin_page.search()
-    expect(admin_page.user_row(api_create_user)).to_be_visible()
-    admin_page.edit(api_create_user)
+    expect(admin_page.user_row(username)).to_be_visible()
+    admin_page.edit(username)
 
     # 2. Act (aksi)
     selected_employee = edit_user_page.edit_user(edit_user_data)
@@ -87,9 +88,9 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
     expect(page).to_have_url(f"{BASE_URL}/web/index.php/admin/viewSystemUsers")
 
     # cari user yang sudah diedit dan pastikan data di tabel terupdate
-    admin_page.filter_by_username(api_create_user)
+    admin_page.filter_by_username(username)
     admin_page.search()
-    row = admin_page.user_row(api_create_user)
+    row = admin_page.user_row(username)
     expect(row).to_be_visible()
     expect(row.get_by_role("cell").nth(2)).to_have_text(edit_user_data["user_role"])
     expect(row.get_by_role("cell").nth(3)).to_have_text(expected_employee)
@@ -97,33 +98,34 @@ def test_edit_user(logged_in_page: Page, api_create_user: str):
 
 
 @allure.title("[TC-ADMIN-04] Menghapus data System Users")
-def test_delete_user(logged_in_page: Page, api_create_user: str):
+def test_delete_user(logged_in_page: Page, api_create_user: dict):
     page = logged_in_page
     admin_page = AdminPage(page)
     sidebar = Sidebar(page)
+    username = api_create_user["username"]
 
     # 1. Arrange (persiapan)
     sidebar.admin.click()
-    admin_page.filter_by_username(api_create_user)
+    admin_page.filter_by_username(username)
     admin_page.search()
-    expect(admin_page.user_row(api_create_user)).to_be_visible()
+    expect(admin_page.user_row(username)).to_be_visible()
 
     # 2. Act (aksi)
-    admin_page.delete(api_create_user)
+    admin_page.delete(username)
 
     # 3. Assert (validasi)
-    admin_page.filter_by_username(api_create_user)
+    admin_page.filter_by_username(username)
     admin_page.search()
-    expect(admin_page.user_row(api_create_user)).to_be_hidden()
+    expect(admin_page.user_row(username)).to_be_hidden()
     expect(page.get_by_text("No Records Found").first).to_be_visible()
 
 
 @allure.title("[TC-ADMIN-05] Melakukan filter data System Users berdasarkan Username")
-def test_filter_user_by_username(logged_in_page: Page, api_create_user: str):
+def test_filter_user_by_username(logged_in_page: Page, api_create_user: dict):
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
-    username = api_create_user
+    username = api_create_user["username"]
 
     # 1. Arrange (persiapan)
     sidebar.admin.click()
@@ -165,21 +167,21 @@ def test_filter_user_by_user_role(logged_in_page: Page):
 @allure.title(
     "[TC-ADMIN-07] Melakukan filter data System Users berdasarkan Employee Name"
 )
-def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: str):
+def test_filter_user_by_employee_name(logged_in_page: Page, api_create_user: dict):
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
-    username = api_create_user
+    user = api_create_user
 
     # 1. Arrange (persiapan)
     sidebar.admin.click()
 
     # 2. Act (aksi)
-    admin_page.filter_by_employee_name("Budi")
+    admin_page.filter_by_employee_name(user["employee_name"])
     admin_page.search()
 
     # 3. Assert (validasi)
-    expect(admin_page.user_row(username)).to_be_visible()
+    expect(admin_page.user_row(user["username"])).to_be_visible()
 
 
 @allure.title("[TC-ADMIN-08] Melakukan filter data System Users berdasarkan Status")
@@ -217,7 +219,9 @@ def test_reset_filter(logged_in_page: Page):
     sidebar.admin.click()
 
     # ambil semua teks jumlah data awal
-    initial_records = page.get_by_text("Records Found").first.inner_text()
+    record_locator = page.get_by_text("Records Found").first
+    expect(record_locator).to_be_visible()
+    initial_records = record_locator.inner_text()
 
     # 2. Act (aksi)
     admin_page.filter_by_username("dani")
@@ -239,19 +243,20 @@ def test_reset_filter(logged_in_page: Page):
 
 
 @allure.title("[TC-ADMIN-10] Melakukan filter data System Users kombinasi")
-def test_filter_user_combination(logged_in_page: Page):
+def test_filter_user_combination(logged_in_page: Page, api_create_user: dict):
     page = logged_in_page
     sidebar = Sidebar(page)
     admin_page = AdminPage(page)
+    user = api_create_user
 
     # 1. Arrange (persiapan)
     sidebar.admin.click()
 
     # 2. Act (aksi)
-    admin_page.filter_by_username("admin1")
-    admin_page.filter_by_user_role("Admin")
-    admin_page.filter_by_employee_name("Budi")
-    admin_page.filter_by_status("Enabled")
+    admin_page.filter_by_username(user["username"])
+    admin_page.filter_by_user_role(user["role"])
+    admin_page.filter_by_employee_name(user["employee_name"])
+    admin_page.filter_by_status(user["status"])
     admin_page.search()
 
     # 3. Assert (validasi)
@@ -261,13 +266,13 @@ def test_filter_user_combination(logged_in_page: Page):
 
     for row in rows.all():
         # cek kolom username
-        expect(row.get_by_role("cell").nth(1)).to_have_text("admin1")
+        expect(row.get_by_role("cell").nth(1)).to_have_text(user["username"])
         # cek kolom user role
-        expect(row.get_by_role("cell").nth(2)).to_have_text("Admin")
+        expect(row.get_by_role("cell").nth(2)).to_have_text(user["role"])
         # cek kolom employee name
-        expect(row.get_by_role("cell").nth(3)).to_contain_text("Budi")
+        expect(row.get_by_role("cell").nth(3)).to_contain_text(user["employee_name"])
         # cek kolom status
-        expect(row.get_by_role("cell").nth(4)).to_have_text("Enabled")
+        expect(row.get_by_role("cell").nth(4)).to_have_text(user["status"])
 
 
 @allure.title("[TC-ADMIN-11] Menghapus data System Users secara massal (Bulk Delete)")

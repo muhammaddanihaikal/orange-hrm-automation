@@ -104,10 +104,23 @@ def api_create_user(logged_in_page: Page):
     assert post_response.ok, f"Gagal bikin user via API: {post_response.text()}"
 
     response_json = post_response.json()
-    user_id = response_json["data"]["id"]
+    data = response_json["data"]
 
-    # 2. pinjemin username
-    yield tumbal_username
+    user_id = data["id"]
+    username = data["userName"]
+    employee_name = data["employee"]["firstName"]
+    role = data["userRole"]["name"]
+    status = "Enabled" if data["status"] else "Disabled"
+
+    # 2. pinjemin datanya
+    user_payload = {
+        "id": user_id,
+        "username": username,
+        "employee_name": employee_name,
+        "role": role,
+        "status": status,
+    }
+    yield user_payload
 
     # 3. teardown (hapus user)
     delete_response = logged_in_page.request.delete(
