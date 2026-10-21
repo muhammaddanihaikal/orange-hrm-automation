@@ -7,6 +7,9 @@ class AddEmployeePage:
         self.PATH = "/web/index.php/pim/addEmployee"
 
         # TODO: Isi locator form Add Employee di sini
+        # locator upload foto profile
+        self.profile_picture = page.locator(".oxd-file-input")
+
         # locator input nama
         self.first_name = page.get_by_role("textbox", name="First Name")
         self.middle_name = page.get_by_role("textbox", name="Middle Name")
@@ -53,17 +56,21 @@ class AddEmployeePage:
 
     def add_employee(self, data: dict):
         """TODO: Mengisi form Add Employee dan klik tombol Save."""
+        if "profile_picture" in data:
+            self.profile_picture.set_input_files(data["profile_picture"])
+
         self.first_name.fill(data["first_name"])
         self.middle_name.fill(data["middle_name"])
         self.last_name.fill(data["last_name"])
         self.employee_id.fill(data["employee_id"])
 
-        # KLIK TOGGLE dulu biar field username & password kebuka!
-        self.create_login_details_togle.click()
+        if "username" in data:
+            self.create_login_details_togle.click()
 
-        self.username.fill(data["username"])
-        self.password.fill(data["password"])
-        self.confirm_password.fill(data["confirm_password"])
+            self.username.fill(data["username"])
+            self.password.fill(data["password"])
+            self.confirm_password.fill(data["confirm_password"])
+
         self.save_btn.click()
 
     def add_employee_empty(self):

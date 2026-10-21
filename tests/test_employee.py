@@ -45,7 +45,16 @@ def test_add_employee(logged_in_page: Page):
     add_employee_page.add_employee(employee_data)
 
     # 3. Assert (validasi)
-    pass
+    expect(page.get_by_text("Successfully Saved")).to_be_visible()
+
+    # navigasi ke halaman Employee List
+    sidebar.pim.click()
+    pim_page.filter_by_employee_id(employee_data["employee_id"])
+    pim_page.search()
+
+    # validasi: hanya ada 1 row di tabel yang sesuai dengan employee_id
+    employee_rows = pim_page.employee_row(employee_data["employee_id"])
+    expect(employee_rows).to_have_count(1)
 
 
 @allure.title("[TC-PIM-03] Menambahkan data Employee tanpa mengisi field mandatory")

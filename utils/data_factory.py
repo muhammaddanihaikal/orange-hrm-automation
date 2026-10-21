@@ -1,3 +1,4 @@
+import os
 import random
 import uuid
 
@@ -11,6 +12,7 @@ def generate_employee_data():
     random_id = str(random.randint(10000, 99999))
     random_num = random.randint(100, 999)
 
+    profile_picture = os.path.abspath("data/avatar.jpg")
     first_name = "dani"
     middle_name = "haikal"
     last_name = f"automation{random_num}"
@@ -19,6 +21,7 @@ def generate_employee_data():
     confirm_password = "JagungManis_9192"
 
     return {
+        "profile_picture": profile_picture,
         "first_name": first_name,
         "middle_name": middle_name,
         "last_name": last_name,

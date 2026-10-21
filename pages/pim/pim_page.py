@@ -9,6 +9,17 @@ class PimPage:
         # TODO: Isi locator filter & tabel di sini
         self.add_btn = page.get_by_role("button", name="Add")
 
+        self.employee_id_filter = (
+            page.locator(".oxd-input-group")
+            .filter(has_text="Employee Id")
+            .get_by_role("textbox")
+        )
+
+        self.employee_table = page.get_by_role("table")
+
+        self.search_btn = page.get_by_role("button", name="Search")
+        self.reset_btn = page.get_by_role("button", name="Reset")
+
     # ==== FUNCTION FILTER SECTION ====
     def filter_by_employee_name(self, employee_name: str):
         """TODO: Mengisi dan memilih opsi autocomplete pada filter Employee Name."""
@@ -16,11 +27,12 @@ class PimPage:
 
     def filter_by_employee_id(self, employee_id: str):
         """TODO: Mengisi input filter Employee Id."""
-        pass
+        self.employee_id_filter.fill(employee_id)
 
     def search(self):
         """TODO: Menekan tombol Search dan menunggu respon API pencarian selesai."""
-        pass
+        with self.page.expect_response("**/api/v2/pim/employees*"):
+            self.search_btn.click()
 
     def reset(self):
         """TODO: Menekan tombol Reset dan menunggu reload data dari API selesai."""
@@ -29,7 +41,7 @@ class PimPage:
     # ==== FUNCTION TABLE SECTION ====
     def employee_row(self, identifier: str):
         """TODO: Mencari baris employee spesifik di tabel berdasarkan nama atau ID."""
-        pass
+        return self.employee_table.get_by_role("row").filter(has_text=identifier)
 
     def edit(self, identifier: str):
         """TODO: Mengeklik tombol edit (icon pensil) pada baris employee yang dipilih."""
