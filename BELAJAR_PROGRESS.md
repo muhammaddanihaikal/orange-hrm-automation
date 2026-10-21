@@ -11,9 +11,10 @@
 | Python | ≥ 3.14 | Bahasa utama |
 | Playwright | ≥ 1.62.0 | Browser automation |
 | Pytest | ≥ 9.1.1 | Test runner |
+| Allure Pytest | ≥ 2.16.0 | Reporting framework |
 | uv | — | Package & env manager |
 
-**Target aplikasi:** [OrangeHRM Demo](https://opensource-demo.orangehrmlive.com)
+**Target aplikasi:** [OrangeHRM Demo](https://opensource-demo.orangehrmlive.com) / Local Docker (`http://localhost:8080`)
 
 ---
 
@@ -22,8 +23,9 @@
 ```
 orange-hrm-automation/
 ├── config.py                  # BASE_URL & konfigurasi global (HEADLESS)
-├── conftest.py                # Fixtures Pytest (playwright, browser, context, page)
+├── conftest.py                # Fixtures Pytest (playwright, browser, context, page, auth, api seeding)
 ├── pyproject.toml             # Dependency management
+├── README.md                  # Dokumentasi petunjuk menjalankan pengujian
 │
 ├── pages/                     # Page Object Model (POM)
 │   ├── login_page.py          # Halaman Login
@@ -36,16 +38,15 @@ orange-hrm-automation/
 │       └── edit_user_page.py  # Halaman form edit user
 │
 ├── tests/                     # File test
-│   ├── test_login.py          # Test login (versi awal)
-│   ├── test_login2.py         # Test login (versi refactor dengan DashboardPage)
-│   └── test_user.py           # Test CRUD user (add & edit)
+│   ├── test_login.py          # Test autentikasi login (DDT parametrize & validasi form)
+│   └── test_user.py           # Test CRUD user & filter manajemen user (11 TC)
 │
 ├── utils/                     # Helper / utility functions
 │   ├── read_data.py           # Baca file JSON dari folder data/
-│   └── data_factory.py        # Generate data dinamis (misal: username unik)
+│   └── data_factory.py        # Generate data dinamis (misal: username unik via UUID)
 │
 ├── data/                      # Test data dalam format JSON
-│   ├── login_data.json        # Data login (valid & invalid)
+│   ├── login_data.json        # Data login (valid, invalid, empty)
 │   └── user_data.json         # Data untuk add user & edit user
 │
 └── testcase/                  # Dokumentasi test case manual
@@ -176,30 +177,27 @@ expect(element).to_have_text("...")      # Elemen memiliki teks persis
 
 ### 8. 📝 Test yang Sudah Ditulis
 
-#### `test_login.py` — Versi awal
-| Test Case | Skenario | Status |
-|---|---|---|
-| `test_login_success` | Login dengan kredensial valid | ✅ |
-| `test_login_invalid_username` | Login dengan username salah | ✅ |
-| `test_login_invalid_password` | Login dengan password salah | ✅ |
-| `test_login_invalid_credentials` | Login dengan keduanya salah | ✅ |
+#### `test_login.py` — Pengujian Autentikasi
+| Test Case ID | Skenario | Status |
+|---|---|:---:|
+| `TC-AUTH-01` | Melakukan login menggunakan data yang valid | ✅ |
+| `TC-AUTH-02` | Melakukan login menggunakan data yang tidak valid (DDT) | ✅ |
+| `TC-AUTH-03` | Melakukan login tanpa mengisi field mandatory (DDT) | ✅ |
 
-#### `test_login2.py` — Versi refactor
-Versi yang lebih bersih: menggunakan `DashboardPage` untuk assertion redirect,
-dan memakai `login_page.heading` sebagai locator (bukan inline `get_by_role`).
-
-| Test Case | Skenario | Status |
-|---|---|---|
-| `test_login_valid` | Login valid + verifikasi redirect ke Dashboard | ✅ |
-| `test_login_invalid_username` | Login username salah (partial, belum ada assertion) | ⚠️ |
-| `test_login_invalid_password` | Login password salah (partial, belum ada assertion) | ⚠️ |
-
-#### `test_user.py` — Test CRUD user
-| Test Case | Skenario | Status |
-|---|---|---|
-| `test_add_user` | Tambah user baru + verifikasi muncul di tabel | ✅ |
-| `test_edit_user` | Edit user (role, employee, status, password) + verifikasi | ✅ |
-| `test_delete_user` | Hapus user + verifikasi row hilang & No Records Found | ✅ |
+#### `test_user.py` — Pengujian Manajemen User (Admin > System Users)
+| Test Case ID | Skenario | Status |
+|---|---|:---:|
+| `TC-ADMIN-01` | Menambahkan data System Users | ✅ |
+| `TC-ADMIN-02` | Menambahkan data System Users tanpa mengisi field mandatory | ✅ |
+| `TC-ADMIN-03` | Mengubah data System Users | ✅ |
+| `TC-ADMIN-04` | Menghapus data System Users | ✅ |
+| `TC-ADMIN-05` | Melakukan filter data System Users berdasarkan Username | ✅ |
+| `TC-ADMIN-06` | Melakukan filter data System Users berdasarkan User Role | ✅ |
+| `TC-ADMIN-07` | Melakukan filter data System Users berdasarkan Employee Name | ✅ |
+| `TC-ADMIN-08` | Melakukan filter data System Users berdasarkan Status | ✅ |
+| `TC-ADMIN-09` | Mereset filter System Users (Bebas Race Condition) | ✅ |
+| `TC-ADMIN-10` | Melakukan filter data System Users kombinasi (Mandiri via API Fixture) | ✅ |
+| `TC-ADMIN-11` | Menghapus data System Users secara massal (Bulk Delete) | ✅ |
 
 ---
 
@@ -224,22 +222,24 @@ test_delete_user:
 
 ---
 
-## 🎯 Goals Belajar Selanjutnya (To-Do List)
+## 🎯 Goals Belajar yang Sudah Berhasil Dicapai (Milestones)
 
 - [x] **Data-Driven Testing (DDT) dengan `@pytest.mark.parametrize`**: Mengubah test login berulang menjadi 1 fungsi saja dengan pemisahan validasi.
 - [x] **Full CRUD Flow (Create, Read, Update, Delete)**: Menyelesaikan pengujian lengkap untuk manajemen user di `test_user.py`.
 - [x] **Action-Based POM Pattern**: Merapikan Page Object dengan Action Method yang konsisten dan anti micro-functions.
-- [ ] **Reuse Authentication State**: Menyimpan status login (cookies) ke sebuah file dan memuatnya ke fixture `logged_in_page`, supaya test CRUD tidak perlu mengulang proses login UI dari awal.
-- [ ] **Network Interception & API Response**: Menggunakan `page.wait_for_response()` untuk memastikan API di background sudah membalas request, sehingga test lebih stabil (mengurangi *flakiness*).
-- [ ] **Negative Test Case & Edge Cases**: Menguji validasi form (misal: membiarkan form tambah user kosong) lalu membuat assertion pada *error message* yang muncul.
-- [ ] **HTML Reporting**: Mengonfigurasi `pytest-html` atau `Allure` agar hasil automation testing bisa dilihat dalam bentuk dashboard web/HTML interaktif yang rapi.
+- [x] **Reuse Authentication State**: Menyimpan status login (cookies) ke `.auth/state.json` via fixture `global_login` dan memuatnya ke `logged_in_page`, memangkas waktu eksekusi test secara masif.
+- [x] **Network Interception & API Response**: Menggunakan `page.expect_response()` untuk memastikan API background sudah membalas request (pada Search, Reset, dan Login).
+- [x] **Negative Test Case & Edge Cases**: Menguji validasi form kosong (`test_add_user_empty` & `test_login_empty_field`).
+- [x] **Hybrid API Data Seeding & Teardown**: Setup data uji via REST API (`page.request.post`) dan otomatis dibersihkan via DELETE (`page.request.delete`), membuat test 100% mandiri (*self-contained*).
+- [x] **HTML Reporting**: Mengonfigurasi `allure-pytest` dengan metadata `@allure.title` untuk menghasilkan laporan pengujian interaktif yang profesional.
 
 ---
 
 ## 💡 Poin Penting & Pelajaran
 
-1. **Jangan hardcode selector** di test langsung — taruh di Page Object
-2. **`filter(has_text=)`** sangat berguna untuk narrow down elemen yang punya class CSS sama tapi label berbeda (seperti form fields di OrangeHRM yang semua pakai `.oxd-input-group`)
-3. **Data dinamis** (seperti username) harus di-generate sekali di module level, bukan per-test, agar `test_add_user` dan `test_edit_user` pakai username yang sama
-4. **`.wait_for(state="hidden")`** dan **`.wait_for(state="visible")`** penting untuk handle elemen async (seperti dropdown search yang butuh waktu load)
-5. **Scope fixture `session`** untuk browser = efisiensi (tidak buka/tutup browser tiap test), tapi context & page tetap `function` scope agar test terisolasi
+1. **Jangan hardcode selector** di test langsung — kumpulkan semua selector di `__init__()` Page Object.
+2. **`filter(has_text=)`** sangat berguna untuk narrow down elemen yang punya class CSS sama tapi label berbeda.
+3. **Data dinamis** (seperti username) harus di-generate via data factory dengan UUID agar tidak terjadi tabrakan data antar-run.
+4. **`.wait_for(state="hidden")`** dan **`.wait_for(state="visible")`** penting untuk handle elemen async (seperti dropdown autocomplete OrangeHRM).
+5. **Scope fixture `session`** untuk browser = efisiensi (tidak buka/tutup browser tiap test), tapi context & page tetap `function` scope agar test terisolasi.
+6. **Auto-waiting sebelum membaca teks**: Pastikan elemen `to_be_visible()` terlebih dahulu sebelum memanggil `.inner_text()` untuk mencegah *race condition*.
