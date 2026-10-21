@@ -1,0 +1,12 @@
+{
+  "add_employee": {
+    "first_name": "Dani",
+    "middle_name": "Automation",
+    "last_name": "Haikal"
+  },
+  "edit_employee": {
+    "first_name": "DaniEdit",
+    "middle_name": "QA",
+    "last_name": "Updated"
+  }
+}
