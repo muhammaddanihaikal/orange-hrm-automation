@@ -54,6 +54,33 @@ class AddEmployeePage:
         # locator tombol save
         self.save_btn = page.get_by_role("button", name="Save")
 
+        # === Locator Validasi ===
+        self.first_name_error = (
+            page.locator(".oxd-input-field-bottom-space")
+            .filter(has=self.first_name)
+            .get_by_text("Required")
+        )
+        self.last_name_error = (
+            page.locator(".oxd-input-field-bottom-space")
+            .filter(has=self.last_name)
+            .get_by_text("Required")
+        )
+        self.username_error = (
+            page.locator(".oxd-input-group")
+            .filter(has_text="Username")
+            .get_by_text("Required")
+        )
+        self.password_error = (
+            page.locator(".oxd-input-group")
+            .filter(has=page.get_by_text("Password", exact=True))
+            .get_by_text("Required")
+        )
+        self.confirm_password_error = (
+            page.locator(".oxd-input-group")
+            .filter(has_text="Confirm Password")
+            .get_by_text("Passwords do not match")
+        )
+
     def add_employee(self, data: dict):
         """TODO: Mengisi form Add Employee dan klik tombol Save."""
         if "profile_picture" in data:
@@ -75,4 +102,5 @@ class AddEmployeePage:
 
     def add_employee_empty(self):
         """TODO: Mengosongkan field mandatory lalu klik tombol Save."""
-        pass
+        self.create_login_details_togle.click()
+        self.save_btn.click()

@@ -65,13 +65,21 @@ def test_add_employee_empty(logged_in_page: Page):
     add_employee_page = AddEmployeePage(page)
 
     # 1. Arrange (persiapan)
-    pass
+    sidebar.pim.click()
+    pim_page.add_btn.click()
 
     # 2. Act (aksi)
-    pass
+    add_employee_page.add_employee_empty()
 
     # 3. Assert (validasi)
-    pass
+    expect(add_employee_page.first_name_error).to_be_visible()
+    expect(add_employee_page.last_name_error).to_be_visible()
+    expect(add_employee_page.username_error).to_be_visible()
+    expect(add_employee_page.password_error).to_be_visible()
+    expect(add_employee_page.confirm_password_error).to_be_visible()
+
+    # Pastikan tetap berada di form Add Employee
+    expect(page).to_have_url(f"{BASE_URL}{add_employee_page.PATH}")
 
 
 @allure.title("[TC-PIM-04] Mengubah data Employee")
