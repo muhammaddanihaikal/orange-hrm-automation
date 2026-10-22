@@ -7,6 +7,13 @@
   "edit_employee": {
     "first_name": "DaniEdit",
     "middle_name": "QA",
-    "last_name": "Updated"
+    "last_name": "Updated",
+    "other_id": "12345",
+    "driver_license_number": "SIM-9999",
+    "license_expiry_date": "2030-12-31",
+    "nationality": "Indonesian",
+    "material_status": "Single",
+    "date_of_birth": "1998-05-15",
+    "gender": "Male"
   }
 }

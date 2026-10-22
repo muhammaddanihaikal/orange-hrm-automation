@@ -5,6 +5,7 @@ from playwright.sync_api import Browser, Page, sync_playwright
 
 from config import BASE_URL, HEADLESS
 from pages.login_page import LoginPage
+from utils.data_factory import generate_employee_data
 
 
 @pytest.fixture(scope="session")
@@ -170,4 +171,52 @@ def api_create_bulk_users(logged_in_page: Page):
     if delete_response.status != 404:
         assert delete_response.ok, (
             f"Gagal hapus bulk user via API: {delete_response.text()}"
+        )
+
+
+@pytest.fixture
+def api_create_employee(logged_in_page: Page):
+    """Menyiapkan data employee via API dan menghapusnya setelah test (Teardown)."""
+    employee_data = generate_employee_data()
+
+    # 1. buat employee via API
+    post_response = logged_in_page.request.post(
+        f"{BASE_URL}/web/index.php/api/v2/pim/employees",
+        data={
+            "firstName": employee_data["first_name"],
+            "middleName": employee_data["middle_name"],
+            "lastName": employee_data["last_name"],
+            "employeeId": employee_data["employee_id"],
+        },
+    )
+    assert post_response.ok, f"Gagal bikin employee via API: {post_response.text()}"
+
+    response_json = post_response.json()
+    data = response_json["data"]
+
+    employee_number = data["empNumber"]
+    employee_id = data["employeeId"]
+    first_name = data["firstName"]
+    middle_name = data["middleName"]
+    last_name = data["lastName"]
+
+    # 2. pinjemin datanya
+    employee_payload = {
+        "employee_number": employee_number,
+        "first_name": first_name,
+        "middle_name": middle_name,
+        "last_name": last_name,
+        "employee_id": employee_id,
+    }
+
+    yield employee_payload
+
+    # 3. teardown (hapus employee)
+    delete_response = logged_in_page.request.delete(
+        f"{BASE_URL}/web/index.php/api/v2/pim/employees",
+        data={"ids": [employee_number]},
+    )
+    if delete_response.status != 404:
+        assert delete_response.ok, (
+            f"Gagal hapus employee via API: {delete_response.text()}"
         )

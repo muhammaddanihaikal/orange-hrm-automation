@@ -83,20 +83,32 @@ def test_add_employee_empty(logged_in_page: Page):
 
 
 @allure.title("[TC-PIM-04] Mengubah data Employee")
-def test_edit_employee(logged_in_page: Page):
+def test_edit_employee(logged_in_page: Page, api_create_employee: dict):
     page = logged_in_page
     sidebar = Sidebar(page)
     pim_page = PimPage(page)
     edit_employee_page = EditEmployeePage(page)
+    employee_data = api_create_employee
 
     # 1. Arrange (persiapan)
-    pass
+    sidebar.pim.click()
+    pim_page.filter_by_employee_id(employee_data["employee_id"])
+    pim_page.search()
+    pim_page.edit(employee_data["employee_id"])
 
     # 2. Act (aksi)
-    pass
+    edit_data = EMPLOYEE_DATA["edit_employee"].copy()
+    edit_employee_page.edit_employee(edit_data)
 
     # 3. Assert (validasi)
-    pass
+    expect(page.get_by_text("Successfully Updated")).to_be_visible()
+
+    sidebar.pim.click()
+    pim_page.filter_by_employee_id(employee_data["employee_id"])
+    pim_page.search()
+    expect(pim_page.employee_row(employee_data["employee_id"])).to_contain_text(
+        edit_data["first_name"]
+    )
 
 
 @allure.title("[TC-PIM-05] Mengubah data Employee tanpa mengisi field mandatory")

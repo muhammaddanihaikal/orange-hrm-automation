@@ -6,7 +6,7 @@ class PimPage:
         self.page = page
         self.PATH = "/web/index.php/pim/viewEmployeeList"
 
-        # TODO: Isi locator filter & tabel di sini
+        # Isi locator filter & tabel di sini
         self.add_btn = page.get_by_role("button", name="Add")
 
         self.employee_id_filter = (
@@ -22,31 +22,34 @@ class PimPage:
 
     # ==== FUNCTION FILTER SECTION ====
     def filter_by_employee_name(self, employee_name: str):
-        """TODO: Mengisi dan memilih opsi autocomplete pada filter Employee Name."""
+        """Mengisi dan memilih opsi autocomplete pada filter Employee Name."""
         pass
 
     def filter_by_employee_id(self, employee_id: str):
-        """TODO: Mengisi input filter Employee Id."""
+        """Mengisi input filter Employee Id."""
         self.employee_id_filter.fill(employee_id)
 
     def search(self):
-        """TODO: Menekan tombol Search dan menunggu respon API pencarian selesai."""
+        """Menekan tombol Search dan menunggu respon API pencarian selesai."""
         with self.page.expect_response("**/api/v2/pim/employees*"):
             self.search_btn.click()
 
     def reset(self):
-        """TODO: Menekan tombol Reset dan menunggu reload data dari API selesai."""
+        """Menekan tombol Reset dan menunggu reload data dari API selesai."""
         pass
 
     # ==== FUNCTION TABLE SECTION ====
     def employee_row(self, identifier: str):
-        """TODO: Mencari baris employee spesifik di tabel berdasarkan nama atau ID."""
+        """Mencari baris employee spesifik di tabel berdasarkan nama atau ID."""
         return self.employee_table.get_by_role("row").filter(has_text=identifier)
 
     def edit(self, identifier: str):
-        """TODO: Mengeklik tombol edit (icon pensil) pada baris employee yang dipilih."""
-        pass
+        """Mengeklik tombol edit (icon pensil) pada baris employee yang dipilih."""
+        with self.page.expect_response("**/api/v2/pim/employees/*/personal-details"):
+            self.employee_row(identifier).get_by_role("button").filter(
+                has=self.page.locator("i.bi-pencil-fill")
+            ).click()
 
     def delete(self, identifier: str):
-        """TODO: Mengeklik tombol hapus (icon tong sampah) dan konfirmasi hapus employee."""
+        """Mengeklik tombol hapus (icon tong sampah) dan konfirmasi hapus employee."""
         pass
