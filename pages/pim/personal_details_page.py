@@ -1,7 +1,7 @@
 from playwright.sync_api import Page
 
 
-class EditEmployeePage:
+class PersonalDetailsPage:
     def __init__(self, page: Page):
         self.page = page
 

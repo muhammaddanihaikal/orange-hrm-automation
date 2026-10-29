@@ -3,7 +3,7 @@ from playwright.sync_api import Page, expect
 
 from config import BASE_URL
 from pages.pim.add_employee_page import AddEmployeePage
-from pages.pim.edit_employee_page import EditEmployeePage
+from pages.pim.personal_details_page import PersonalDetailsPage
 from pages.pim.pim_page import PimPage
 from pages.sidebar import Sidebar
 from utils.data_factory import generate_employee_data
@@ -87,7 +87,7 @@ def test_edit_employee(logged_in_page: Page, api_create_employee: dict):
     page = logged_in_page
     sidebar = Sidebar(page)
     pim_page = PimPage(page)
-    edit_employee_page = EditEmployeePage(page)
+    personal_details_page = PersonalDetailsPage(page)
     employee_data = api_create_employee
 
     # 1. Arrange (persiapan)
@@ -98,7 +98,7 @@ def test_edit_employee(logged_in_page: Page, api_create_employee: dict):
 
     # 2. Act (aksi)
     edit_data = EMPLOYEE_DATA["edit_employee"].copy()
-    edit_employee_page.edit_employee(edit_data)
+    personal_details_page.edit_employee(edit_data)
 
     # 3. Assert (validasi)
     expect(page.get_by_text("Successfully Updated")).to_be_visible()
@@ -116,7 +116,7 @@ def test_edit_employee_empty(logged_in_page: Page):
     page = logged_in_page
     sidebar = Sidebar(page)
     pim_page = PimPage(page)
-    edit_employee_page = EditEmployeePage(page)
+    personal_details_page = PersonalDetailsPage(page)
 
     # 1. Arrange (persiapan)
     pass
